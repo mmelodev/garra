@@ -1,15 +1,17 @@
 package br.com.garra.controller;
 
+import br.com.garra.dto.DadosListagemAluno;
+import br.com.garra.dto.DadosListagemProfessor;
 import br.com.garra.entity.Professor;
 import br.com.garra.model.DadosProfessor;
 import br.com.garra.repository.ProfessorRepository;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/professor")
@@ -22,5 +24,10 @@ public class ProfessorController {
     @Transactional
     public void cadastroProfessor (@RequestBody @Valid DadosProfessor dados){
         repository.save(new Professor(dados));
+    }
+
+    @GetMapping
+    public Page<DadosListagemProfessor> listarProfessorsAtivos (@PageableDefault (size = 10, sort = {"nome"}) Pageable p){
+        return repository.findAllByAtivoTrue(p).map(DadosListagemProfessor::new);
     }
 }
