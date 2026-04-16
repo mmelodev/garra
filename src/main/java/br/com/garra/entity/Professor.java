@@ -1,5 +1,6 @@
 package br.com.garra.entity;
 
+import br.com.garra.dto.DadosAtualizarProfessor;
 import br.com.garra.enums.AreaConhecimento;
 import br.com.garra.model.DadosProfessor;
 import jakarta.persistence.*;
@@ -167,5 +168,31 @@ public class Professor {
 
     public void setDescricao(String descricao) {
         this.descricao = descricao;
+    }
+
+    public void atualizarCadastroProfessor (DadosAtualizarProfessor dados){
+        if(dados.nome() != null){
+            this.nome = dados.nome();
+        }
+        if (dados.areaConhecimento() != null){
+            this.areaConhecimento = dados.areaConhecimento();
+        }
+
+        if(dados.email() != null){
+            this.email = dados.email();
+        }
+        if(dados.whatsapp() != null){
+            this.whatsapp = dados.whatsapp();
+        }
+        if(dados.dataDeSaida() != null){
+            this.dataDeSaida = LocalDate.parse(dados.dataDeSaida());
+        }
+        if(dados.descricao() != null) {
+            this.descricao = dados.descricao();
+        }
+    }
+
+    public void inativarProfessor (){
+        this.ativo = false;
     }
 }

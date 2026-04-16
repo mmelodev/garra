@@ -1,5 +1,6 @@
 package br.com.garra.controller;
 
+import br.com.garra.dto.DadosAtualizarProfessor;
 import br.com.garra.dto.DadosListagemAluno;
 import br.com.garra.dto.DadosListagemProfessor;
 import br.com.garra.entity.Professor;
@@ -29,5 +30,19 @@ public class ProfessorController {
     @GetMapping
     public Page<DadosListagemProfessor> listarProfessorsAtivos (@PageableDefault (size = 10, sort = {"nome"}) Pageable p){
         return repository.findAllByAtivoTrue(p).map(DadosListagemProfessor::new);
+    }
+
+    @PutMapping
+    @Transactional
+    public void atualizarCadastroProfesor(@RequestBody @Valid DadosAtualizarProfessor dados){
+        Professor professor = repository.findById(dados.id()).orElseThrow(RuntimeException::new);
+        professor.atualizarCadastroProfessor(dados);
+    }
+
+    @DeleteMapping("/{id}")
+    @Transactional
+    public void inativarAluno(@PathVariable Long id){
+        Professor professor = repository.findById(id).orElseThrow(RuntimeException::new);
+        professor.inativarProfessor();
     }
 }

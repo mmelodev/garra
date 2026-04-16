@@ -45,7 +45,6 @@ public class AlunoController {
     @Transactional
     public void inativarAluno (@PathVariable Long id){
         Aluno aluno = repository.findById(id).orElseThrow(() -> new RuntimeException());
-
         aluno.inativarAluno();
     }
 }
