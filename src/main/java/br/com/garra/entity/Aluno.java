@@ -1,4 +1,5 @@
 package br.com.garra.entity;
+import br.com.garra.dto.DadosAtualizarAluno;
 import br.com.garra.model.DadosAluno;
 import jakarta.persistence.*;
 
@@ -152,5 +153,27 @@ public class Aluno {
 
     public void setCpf(String cpf) {
         this.cpf = cpf;
+    }
+
+    public void atualizarCadastroAluno (DadosAtualizarAluno dados){
+        if(dados.nome() != null){
+            this.nome = dados.nome();
+        }
+
+        if(dados.email() != null){
+            this.email = dados.email();
+        }
+
+        if(dados.whatsapp() != null){
+            this.whatsapp = dados.whatsapp();
+        }
+
+        if (dados.endereco() != null){
+            this.endereco = dados.endereco();
+        }
+    }
+
+    public void inativarAluno (){
+        this.ativo = false;
     }
 }
