@@ -18,7 +18,7 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())  // Desabilita CSRF -> 401 http status
                 .authorizeHttpRequests(auth -> auth
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll() // mudar a lógica aqui posteriormente
                 )
                 .httpBasic(httpBasic -> {});
 
@@ -31,6 +31,7 @@ public class SecurityConfig {
                 .password("{noop}04200420")
                 .roles("USER")
                 .build();
+        //alterar posteriormente
 
         return new InMemoryUserDetailsManager(user);
     }

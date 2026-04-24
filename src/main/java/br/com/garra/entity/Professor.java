@@ -7,6 +7,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Table(name = "professor")
@@ -49,6 +51,9 @@ public class Professor {
 
     private String descricao;
 
+    @OneToMany(mappedBy = "professor", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    List<Aluno> alunos = new ArrayList<>();
+
     public Professor (){}
 
     public Professor (DadosProfessor prof){
@@ -64,6 +69,15 @@ public class Professor {
         this.dataDeEntrada = LocalDate.parse(prof.dataDeEntrada());
         this.dataDeSaida = Optional.ofNullable(prof.dataDeSaida()).map(LocalDate::parse).orElse(null);
         this.descricao = prof.descricao();
+    }
+
+    public List<Aluno> getAlunos() {
+        return alunos;
+    }
+
+    public void setAlunos(List<Aluno> alunos) {
+        alunos.forEach(a -> a.setProfessor(this));
+        this.alunos = alunos;
     }
 
     public Long getId() {

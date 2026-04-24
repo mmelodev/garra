@@ -1,5 +1,6 @@
 package br.com.garra.controller;
 
+import br.com.garra.dto.DadosAlunoG;
 import br.com.garra.dto.DadosAtualizarAluno;
 import br.com.garra.dto.DadosListagemAluno;
 import br.com.garra.entity.Aluno;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/aluno")
 public class AlunoController {
@@ -33,11 +35,16 @@ public class AlunoController {
         return repository.findAllByAtivoTrue(paginacao).map(DadosListagemAluno::new);
     }
 
+    @GetMapping("/{id}/infoG")
+    public DadosAlunoG listaAlunoInfoCompleta(@PathVariable Long id){
+        Aluno aluno = repository.findById(id).orElseThrow(() -> new RuntimeException());
+        return new DadosAlunoG(aluno);
+    }
+
     @PutMapping
     @Transactional
     public void atualizarCadastroAluno(@RequestBody @Valid DadosAtualizarAluno dados){
         Aluno aluno = repository.findById(dados.id()).orElseThrow(() -> new RuntimeException());
-
         aluno.atualizarCadastroAluno(dados);
     }
 

@@ -33,6 +33,10 @@ public class Aluno {
     @Column(nullable = false)
     private String cpf;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "professor_id")
+    private Professor professor;
+
     public Aluno (){
     }
 
@@ -49,6 +53,14 @@ public class Aluno {
         this.dataMatricula = LocalDate.parse(aluno.dataMatricula());
         this.rg = aluno.rg();
         this.cpf = aluno.cpf();
+    }
+
+    public Professor getProfessor() {
+        return professor;
+    }
+
+    public void setProfessor(Professor professor) {
+        this.professor = professor;
     }
 
     public Long getId() {
@@ -158,6 +170,10 @@ public class Aluno {
     public void atualizarCadastroAluno (DadosAtualizarAluno dados){
         if(dados.nome() != null){
             this.nome = dados.nome();
+        }
+
+        if(dados.professor() != null){
+            this.professor = dados.professor();
         }
 
         if(dados.email() != null){

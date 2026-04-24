@@ -1,35 +1,27 @@
-import React, { useEffect, useState } from 'react';
-import { fetchAlunos, Aluno } from './api';
+import { Dashboard } from './views/Dashboard'
+import { Toaster } from 'sonner'
+import { ThemeToggle } from './components/ThemeToggle'
 
-const App: React.FC = () => {
-  const [alunos, setAlunos] = useState<Aluno[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    // Temporariamente desabilitado para evitar chamada autenticada
-    // fetchAlunos()
-    //   .then(data => setAlunos(data))
-    //   .catch(err => setError(err.message))
-    //   .finally(() => setLoading(false));
-    setLoading(false);
-  }, []);
-
-  if (loading) return <div>Carregando alunos...</div>;
-  if (error) return <div>Erro: {error}</div>;
-
+function App() {
   return (
-    <div style={{ padding: '1rem' }}>
-      <h1>Alunos</h1>
-      <ul>
-        {alunos.map(a => (
-          <li key={a.id}>
-            {a.nome} - {a.email}
-          </li>
-        ))}
-      </ul>
+    <div className="min-h-screen w-full bg-[#f8fafc] dark:bg-gray-900 transition-colors duration-300">
+      <div className="absolute top-6 right-6 md:top-8 md:right-8 z-50">
+        <ThemeToggle />
+      </div>
+      {/* Toaster: Adiciona aqueles popups coloridos e animados 
+          quando você deleta ou edita algo com sucesso 
+      */}
+      <Toaster position="top-right" richColors closeButton />
+      
+      {/* Renderiza a nossa View principal que contém a lógica do Spring Boot */}
+      <Dashboard />
+      
+      {/* Rodapé Simples e Elegante */}
+      <footer className="py-8 text-center text-gray-400 text-sm">
+        <p>&copy; {new Date().getFullYear()} Garra Admin - Gestão Escolar Inteligente</p>
+      </footer>
     </div>
-  );
-};
+  )
+}
 
-export default App;
+export default App
