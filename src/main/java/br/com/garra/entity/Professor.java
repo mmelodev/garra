@@ -3,6 +3,7 @@ package br.com.garra.entity;
 import br.com.garra.dto.DadosAtualizarProfessor;
 import br.com.garra.enums.AreaConhecimento;
 import br.com.garra.model.DadosProfessor;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
@@ -52,6 +53,7 @@ public class Professor {
     private String descricao;
 
     @OneToMany(mappedBy = "professor", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @JsonIgnore
     List<Aluno> alunos = new ArrayList<>();
 
     public Professor (){}
@@ -75,10 +77,6 @@ public class Professor {
         return alunos;
     }
 
-    public void setAlunos(List<Aluno> alunos) {
-        alunos.forEach(a -> a.setProfessor(this));
-        this.alunos = alunos;
-    }
 
     public Long getId() {
         return id;
@@ -90,10 +88,6 @@ public class Professor {
 
     public Boolean getAtivo() {
         return ativo;
-    }
-
-    public void setAtivo(Boolean ativo) {
-        this.ativo = ativo;
     }
 
     public String getNome() {
@@ -108,24 +102,12 @@ public class Professor {
         return areaConhecimento;
     }
 
-    public void setAreaConhecimento(AreaConhecimento areaConhecimento) {
-        this.areaConhecimento = areaConhecimento;
-    }
-
     public String getGenero() {
         return genero;
     }
 
-    public void setGenero(String genero) {
-        this.genero = genero;
-    }
-
     public LocalDate getDataNascimento() {
         return dataNascimento;
-    }
-
-    public void setDataNascimento(LocalDate dataNascimento) {
-        this.dataNascimento = dataNascimento;
     }
 
     public String getRg() {
@@ -164,9 +146,6 @@ public class Professor {
         return dataDeEntrada;
     }
 
-    public void setDataDeEntrada(LocalDate dataDeEntrada) {
-        this.dataDeEntrada = dataDeEntrada;
-    }
 
     public LocalDate getDataDeSaida() {
         return dataDeSaida;
@@ -178,10 +157,6 @@ public class Professor {
 
     public String getDescricao() {
         return descricao;
-    }
-
-    public void setDescricao(String descricao) {
-        this.descricao = descricao;
     }
 
     public void atualizarCadastroProfessor (DadosAtualizarProfessor dados){

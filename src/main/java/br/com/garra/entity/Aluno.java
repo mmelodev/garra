@@ -75,10 +75,6 @@ public class Aluno {
         return ativo;
     }
 
-    public void setAtivo(Boolean ativo) {
-        this.ativo = ativo;
-    }
-
     public String getNome() {
         return nome;
     }
@@ -91,16 +87,8 @@ public class Aluno {
         return sexo;
     }
 
-    public void setSexo(String sexo) {
-        this.sexo = sexo;
-    }
-
     public String getEndereco() {
         return endereco;
-    }
-
-    public void setEndereco(String endereco) {
-        this.endereco = endereco;
     }
 
     public String getEmail() {
@@ -115,16 +103,8 @@ public class Aluno {
         return nomeMae;
     }
 
-    public void setNomeMae(String nomeMae) {
-        this.nomeMae = nomeMae;
-    }
-
     public String getNomePai() {
         return nomePai;
-    }
-
-    public void setNomePai(String nomePai) {
-        this.nomePai = nomePai;
     }
 
     public String getWhatsapp() {
@@ -139,33 +119,18 @@ public class Aluno {
         return possuiBolsa;
     }
 
-    public void setPossuiBolsa(Boolean possuiBolsa) {
-        this.possuiBolsa = possuiBolsa;
-    }
-
     public LocalDate getDataMatricula() {
         return dataMatricula;
-    }
-
-    public void setDataMatricula(LocalDate dataMatricula) {
-        this.dataMatricula = dataMatricula;
     }
 
     public String getRg() {
         return rg;
     }
 
-    public void setRg(String rg) {
-        this.rg = rg;
-    }
-
     public String getCpf() {
         return cpf;
     }
 
-    public void setCpf(String cpf) {
-        this.cpf = cpf;
-    }
 
     public void atualizarCadastroAluno (DadosAtualizarAluno dados){
         if(dados.nome() != null){

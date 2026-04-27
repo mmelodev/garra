@@ -37,7 +37,9 @@ export const EntityModal = ({ isOpen, onClose, type, initialData, onSave }: Prop
     const loadProfessores = async () => {
         try {
             const res = await ProfessorService.getAll();
-            setProfessores(res.data.content || []);
+            const todos = res.data.content || [];
+            // Filtra apenas os professores ativos (João Carlos ID 3 e Murilo ID 4)
+            setProfessores(todos.filter(p => p.id === 3 || p.id === 4));
         } catch (error) {
             console.error("Erro ao carregar professores:", error);
         }
@@ -68,10 +70,13 @@ export const EntityModal = ({ isOpen, onClose, type, initialData, onSave }: Prop
         e.preventDefault();
         setLoading(true);
 
-        // Limpa os dados: converte strings vazias em null
-        // Isso evita erros no Spring Boot ao tentar parsear datas vazias
+        // Limpa os dados e remove pontos/traços do CPF/WhatsApp se necessário antes de enviar
         const cleanedData = Object.keys(formData).reduce((acc: any, key) => {
-            const value = formData[key];
+            let value = formData[key];
+            
+            // Remove formatação do CPF para enviar apenas números se desejar (opcional, dependendo do backend)
+            // if (key === 'cpf') value = value.replace(/\D/g, '');
+            
             acc[key] = value === '' ? null : value;
             return acc;
         }, {});
@@ -96,13 +101,17 @@ export const EntityModal = ({ isOpen, onClose, type, initialData, onSave }: Prop
         <>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="col-span-1 md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Nome</label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Nome <span className="text-red-500 font-bold">*</span>
+                    </label>
                     <input required name="nome" value={formData.nome || ''} onChange={handleChange} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-cyan-500 focus:ring-cyan-500 p-2 border bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100" />
                 </div>
 
                 {/* Campo de Seleção de Professor */}
                 <div className="col-span-1 md:col-span-2 relative">
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Professor Responsável</label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Professor Responsável <span className="text-red-500 font-bold">*</span>
+                    </label>
                     <div
                         onClick={() => setIsProfessorListOpen(!isProfessorListOpen)}
                         className="flex items-center justify-between p-2 border rounded-md cursor-pointer bg-white dark:bg-gray-700 dark:border-gray-600 hover:border-cyan-500 transition-colors"
@@ -168,26 +177,35 @@ export const EntityModal = ({ isOpen, onClose, type, initialData, onSave }: Prop
                 </div>
 
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Email</label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Email <span className="text-red-500 font-bold">*</span>
+                    </label>
                     <input required type="email" name="email" value={formData.email || ''} onChange={handleChange} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-cyan-500 focus:ring-cyan-500 p-2 border bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100" />
                 </div>
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">WhatsApp</label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        WhatsApp <span className="text-red-500 font-bold">*</span>
+                    </label>
                     <input required name="whatsapp" value={formData.whatsapp || ''} onChange={handleChange} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-cyan-500 focus:ring-cyan-500 p-2 border bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100" />
                 </div>
+
                 <div className="col-span-1 md:col-span-2">
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Endereço</label>
-                    <input required name="endereco" value={formData.endereco || ''} onChange={handleChange} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-cyan-500 focus:ring-cyan-500 p-2 border bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100" />
+                    <input name="endereco" value={formData.endereco || ''} onChange={handleChange} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-cyan-500 focus:ring-cyan-500 p-2 border bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100" />
                 </div>
 
                 {!isEdit && (
                     <>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">CPF</label>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                CPF <span className="text-red-500 font-bold">*</span>
+                            </label>
                             <input required name="cpf" value={formData.cpf || ''} onChange={handleChange} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-cyan-500 focus:ring-cyan-500 p-2 border bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100" />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">RG</label>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                RG <span className="text-red-500 font-bold">*</span>
+                            </label>
                             <input required name="rg" value={formData.rg || ''} onChange={handleChange} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-cyan-500 focus:ring-cyan-500 p-2 border bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100" />
                         </div>
                         <div>
@@ -199,11 +217,13 @@ export const EntityModal = ({ isOpen, onClose, type, initialData, onSave }: Prop
                             </select>
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Possui Bolsa?</label>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                Possui Bolsa? <span className="text-red-500 font-bold">*</span>
+                            </label>
                             <select required name="possuiBolsa" value={formData.possuiBolsa || ''} onChange={handleChange} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-cyan-500 focus:ring-cyan-500 p-2 border bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100">
                                 <option value="">Selecione...</option>
-                                <option value="Sim">Sim</option>
-                                <option value="Não">Não</option>
+                                <option value="true">Sim</option>
+                                <option value="false">Não</option>
                             </select>
                         </div>
                         <div>
@@ -215,7 +235,9 @@ export const EntityModal = ({ isOpen, onClose, type, initialData, onSave }: Prop
                             <input name="nomePai" value={formData.nomePai || ''} onChange={handleChange} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-cyan-500 focus:ring-cyan-500 p-2 border bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100" />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Data de Matrícula</label>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                Data de Matrícula <span className="text-red-500 font-bold">*</span>
+                            </label>
                             <input required type="date" name="dataMatricula" value={formData.dataMatricula || ''} onChange={handleChange} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-cyan-500 focus:ring-cyan-500 p-2 border bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100" />
                         </div>
                     </>

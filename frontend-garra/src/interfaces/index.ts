@@ -1,28 +1,31 @@
-export type AreaConhecimento = 
-    | 'MATEMATICA' 
-    | 'REDAÇÃO' 
-    | 'FÍSICA' 
-    | 'QUÍMICA' 
-    | 'PORTUGUÊS' 
-    | 'LITERATURA' 
-    | 'HISTÓRIA' 
-    | 'GEOGRAFIA' 
+export type AreaConhecimento =
+    | 'MATEMATICA'
+    | 'REDAÇÃO'
+    | 'FÍSICA'
+    | 'QUÍMICA'
+    | 'PORTUGUÊS'
+    | 'LITERATURA'
+    | 'HISTÓRIA'
+    | 'GEOGRAFIA'
     | 'BIOLOGIA';
 
 export interface Aluno {
     id: number;
+    ativo?: boolean;
     nome: string;
     email: string;
     whatsapp: string;
+    whasapp?: string; // Para compatibilidade com o DTO DadosListagemAluno
     endereco: string;
     sexo?: string;
     nomeMae?: string;
     nomePai?: string;
-    possuiBolsa?: string;
+    possuiBolsa?: string | boolean;
     dataMatricula?: string;
     rg?: string;
     cpf?: string;
     professor?: Professor;
+    professorId?: Professor; // O DTO DadosListagemAluno envia o objeto Professor aqui
 }
 
 export interface Professor {
@@ -50,17 +53,17 @@ export interface SpringPage<T> {
 // DTOs para Cadastro
 export interface DadosCadastroAluno {
     nome: string;
-    sexo: string;
-    endereco: string;
-    email: string;
-    nomeMae: string;
-    nomePai: string;
-    whatsapp: string;
-    possuiBolsa: string;
-    dataMatricula: string;
-    rg: string;
-    cpf: string;
     professorId?: number;
+    email: string;
+    whatsapp: string;
+    cpf: string;
+    rg: string;
+    dataMatricula: string;
+    possuiBolsa: string;
+    sexo?: string;
+    endereco?: string;
+    nomeMae?: string;
+    nomePai?: string;
 }
 
 export interface DadosCadastroProfessor {

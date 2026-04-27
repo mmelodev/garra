@@ -49,6 +49,11 @@ export const EntityCard = ({ data, type, onDelete, onClickCard }: Props) => {
                 <div className="flex items-center gap-2 text-gray-500 text-sm">
                     <Phone size={16} /> {data.whatsapp}
                 </div>
+                {!isProf && (data as Aluno).professor && (
+                    <div className="flex items-center gap-2 text-indigo-500 dark:text-indigo-400 text-sm font-semibold mt-2 border-t dark:border-gray-700 pt-2">
+                        <GraduationCap size={16} /> {(data as Aluno).professor?.nome}
+                    </div>
+                )}
             </div>
 
             {isProf && (

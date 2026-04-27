@@ -6,7 +6,7 @@ const api = axios.create({
 });
 
 export const AlunoService = {
-      getAll: () => api.get<SpringPage<Aluno>>('/aluno'),
+      getAll: (params?: { page?: number; size?: number; ativo?: boolean }) => api.get<SpringPage<Aluno>>('/aluno', { params }),
       getInfoG: (id: number) => api.get(`/aluno/${id}/infoG`),
       create: (dados: DadosCadastroAluno) => api.post('/aluno', dados),
       update: (dados: DadosAtualizarAluno) => api.put('/aluno', dados),
@@ -14,7 +14,7 @@ export const AlunoService = {
 };
 
 export const ProfessorService = {
-      getAll: () => api.get<SpringPage<Professor>>('/professor'),
+      getAll: (params?: { page?: number; size?: number }) => api.get<SpringPage<Professor>>('/professor', { params }),
       getInfoG: (id: number) => api.get(`/professor/${id}/infoG`),
       create: (dados: DadosCadastroProfessor) => api.post('/professor', dados),
       update: (dados: DadosAtualizarProfessor) => api.put('/professor', dados),

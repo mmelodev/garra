@@ -4,8 +4,10 @@ import br.com.garra.dto.DadosAlunoG;
 import br.com.garra.dto.DadosAtualizarAluno;
 import br.com.garra.dto.DadosListagemAluno;
 import br.com.garra.entity.Aluno;
+import br.com.garra.entity.Professor;
 import br.com.garra.model.DadosAluno;
 import br.com.garra.repository.AlunoRepository;
+import br.com.garra.repository.ProfessorRepository;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,11 +25,16 @@ public class AlunoController {
 
     @Autowired
     private AlunoRepository repository;
+    @Autowired
+    private ProfessorRepository professorRepository;
 
     @PostMapping
     @Transactional
     public void cadastroAluno(@RequestBody @Valid DadosAluno dados){
-        repository.save(new Aluno(dados));
+        Professor professor = professorRepository.getReferenceById(dados.professorId());
+        Aluno aluno = new Aluno(dados);
+        aluno.setProfessor(professor);
+        repository.save(aluno);
     }
 
     @GetMapping
