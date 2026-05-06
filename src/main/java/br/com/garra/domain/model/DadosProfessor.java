@@ -1,11 +1,8 @@
-package br.com.garra.model;
+package br.com.garra.domain.model;
 
-import br.com.garra.enums.AreaConhecimento;
-import jakarta.persistence.*;
+import br.com.garra.domain.enums.AreaConhecimento;
 import jakarta.validation.constraints.NotBlank;
 import org.antlr.v4.runtime.misc.NotNull;
-
-import java.time.LocalDate;
 
 public record DadosProfessor (@NotNull Long id, @NotBlank String nome, @NotNull AreaConhecimento areaConhecimento, String genero, String dataNascimento, @NotBlank String rg, @NotBlank String cpf, @NotBlank String email, @NotBlank String whatsapp, @NotBlank String dataDeEntrada, String dataDeSaida, String descricao){
     @Override

@@ -1,7 +1,7 @@
-package br.com.garra.dto;
+package br.com.garra.domain.dto;
 
-import br.com.garra.entity.Professor;
-import br.com.garra.enums.AreaConhecimento;
+import br.com.garra.domain.entity.Professor;
+import br.com.garra.domain.enums.AreaConhecimento;
 
 public record DadosListagemProfessor(Long id, String nome, AreaConhecimento areaConhecimento, String email, String whatsapp) {
     public DadosListagemProfessor(Professor professor){

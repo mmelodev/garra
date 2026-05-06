@@ -1,11 +1,10 @@
-package br.com.garra.entity;
+package br.com.garra.domain.entity;
 
-import br.com.garra.dto.DadosAtualizarProfessor;
-import br.com.garra.enums.AreaConhecimento;
-import br.com.garra.model.DadosProfessor;
+import br.com.garra.domain.dto.DadosAtualizarProfessor;
+import br.com.garra.domain.enums.AreaConhecimento;
+import br.com.garra.domain.model.DadosProfessor;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 
 import java.time.LocalDate;
 import java.util.ArrayList;

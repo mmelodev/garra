@@ -1,9 +1,7 @@
-package br.com.garra.dto;
+package br.com.garra.domain.dto;
 
-import br.com.garra.entity.Aluno;
-import br.com.garra.entity.Professor;
-import jakarta.validation.constraints.NotBlank;
-import org.antlr.v4.runtime.misc.NotNull;
+import br.com.garra.domain.entity.Aluno;
+import br.com.garra.domain.entity.Professor;
 
 import java.time.LocalDate;
 

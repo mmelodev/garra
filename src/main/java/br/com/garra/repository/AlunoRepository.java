@@ -1,6 +1,6 @@
 package br.com.garra.repository;
 
-import br.com.garra.entity.Aluno;
+import br.com.garra.domain.entity.Aluno;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

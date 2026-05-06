@@ -1,7 +1,8 @@
-package br.com.garra.entity;
-import br.com.garra.dto.DadosAtualizarAluno;
-import br.com.garra.model.DadosAluno;
+package br.com.garra.domain.entity;
+import br.com.garra.domain.dto.DadosAtualizarAluno;
+import br.com.garra.domain.model.DadosAluno;
 import jakarta.persistence.*;
+import br.com.garra.domain.entity.Professor;
 
 import java.time.LocalDate;
 

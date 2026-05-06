@@ -1,10 +1,7 @@
-package br.com.garra.dto;
+package br.com.garra.domain.dto;
 
-import br.com.garra.entity.Professor;
-import br.com.garra.enums.AreaConhecimento;
-import jakarta.validation.constraints.NotBlank;
-import org.antlr.v4.runtime.misc.NotNull;
-import org.springframework.cglib.core.Local;
+import br.com.garra.domain.entity.Professor;
+import br.com.garra.domain.enums.AreaConhecimento;
 
 import java.time.LocalDate;
 
