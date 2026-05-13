@@ -1,15 +1,25 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { AlunoService, ProfessorService } from '../services/api';
-import { Aluno, Professor } from '../interfaces';
+import { Aluno, Professor, AREA_CONHECIMENTO_OPTIONS, areaConhecimentoLabel } from '../interfaces';
 import { EntityCard } from '../components/EntityCard';
 import { EntityModal } from '../components/EntityModal';
 import { EntityDetailsModal } from '../components/EntityDetailsModal';
 import { ConfirmModal } from '../components/ConfirmModal';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus } from 'lucide-react';
+import { Plus, LogOut } from 'lucide-react';
 import { toast } from 'sonner';
+import { clearSession, isAdminSession, readSession } from '../auth/session';
 
 export const Dashboard = () => {
+      const navigate = useNavigate();
+      const session = readSession();
+      const isAdmin = isAdminSession(session);
+
+      const handleLogout = () => {
+            clearSession();
+            navigate('/login', { replace: true });
+      };
       const [alunos, setAlunos] = useState<Aluno[]>([]);
       const [professores, setProfessores] = useState<Professor[]>([]);
       const [view, setView] = useState<'alunos' | 'professores'>('alunos');
@@ -28,6 +38,9 @@ export const Dashboard = () => {
       const [professorSize, setProfessorSize] = useState(8);
       const [professorTotalPages, setProfessorTotalPages] = useState<number | null>(null);
       const [professorTotalElements, setProfessorTotalElements] = useState<number | null>(null);
+      // New filter for discipline (area de conhecimento)
+      const [disciplineFilter, setDisciplineFilter] = useState('');
+      const [isProfLoading, setIsProfLoading] = useState(false);
 
       const displayAlunoTotalPages = Number.isInteger(alunoTotalPages) && alunoTotalPages! > 0 ? alunoTotalPages! : 1;
       const displayAlunoTotalElements = Number.isInteger(alunoTotalElements) && alunoTotalElements! >= 0 ? alunoTotalElements! : 0;
@@ -37,6 +50,23 @@ export const Dashboard = () => {
 
       const fetchData = async () => {
             try {
+                  // If viewing professors only, apply discipline filter and no pagination UI
+                  if (view === 'professores') {
+                        setIsProfLoading(true);
+                        if (disciplineFilter) {
+                              const { data } = await ProfessorService.getByArea(disciplineFilter);
+                              const list = Array.isArray(data) ? data : [];
+                              setProfessores(list as Professor[]);
+                        } else {
+                              const response = await ProfessorService.getAll({ page: 0, size: 1000 });
+                              setProfessores(response.data.content || []);
+                        }
+                        setAlunos([]);
+                        setIsProfLoading(false);
+                        return;
+                  }
+
+                  // Default: fetch both alunos and professores with pagination
                   const [resP, firstPage] = await Promise.all([
                         ProfessorService.getAll({ page: professorPage, size: professorSize }),
                         AlunoService.getAll({ page: alunoPage, size: alunoSize, ativo: true })
@@ -44,8 +74,7 @@ export const Dashboard = () => {
 
                   const firstAlunos = (firstPage.data.content || []).map((a: any) => ({
                         ...a,
-                        whatsapp: a.whatsapp || a.whasapp,
-                        // Se o professor vier dentro de professorId (como no DTO), movemos para professor
+                        whatsapp: a.whatsapp || a.whasapp || (a as { whasap?: string }).whasap,
                         professor: a.professor || a.professorId
                   }));
 
@@ -61,7 +90,7 @@ export const Dashboard = () => {
                         );
                         const restAlunos = restPages.flatMap((page) => (page.data.content || []).map((a: any) => ({
                               ...a,
-                              whatsapp: a.whatsapp || a.whasapp,
+                              whatsapp: a.whatsapp || a.whasapp || (a as { whasap?: string }).whasap,
                               professor: a.professor || a.professorId
                         })));
                         listaAlunos = [...listaAlunos, ...restAlunos];
@@ -75,15 +104,16 @@ export const Dashboard = () => {
                   setProfessores(listaProfessores);
                   setProfessorTotalPages(resP.data.totalPages);
                   setProfessorTotalElements(resP.data.totalElements);
-
             } catch (error) {
                   console.error("Erro ao buscar dados:", error);
                   setAlunos([]);
                   setProfessores([]);
+            } finally {
+                  setIsProfLoading(false);
             }
       };
 
-      useEffect(() => { fetchData(); }, [alunoPage, alunoSize, professorPage, professorSize]);
+      useEffect(() => { fetchData(); }, [view, disciplineFilter, alunoPage, alunoSize, professorPage, professorSize]);
 
       const handleDeleteRequest = (id: number, type: 'aluno' | 'professor') => {
             setDeleteConfig({ isOpen: true, id, type });
@@ -174,16 +204,36 @@ export const Dashboard = () => {
       return (
             <div className="min-h-screen bg-[#f8fafc] dark:bg-gray-900 p-4 md:p-12 transition-colors duration-300">
                   <header className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center mb-12 gap-6 relative">
-                        <div>
-                              <h1 className="text-5xl font-black text-gray-900 dark:text-white tracking-tighter transition-colors">Garra<span className="text-indigo-600 dark:text-indigo-400">Admin</span></h1>
+                        <div className="flex-1 w-full">
+                              <div className="flex flex-wrap items-center gap-3 mb-2">
+                                    <h1 className="text-5xl font-black text-gray-900 dark:text-white tracking-tighter transition-colors">Garra<span className="text-indigo-600 dark:text-indigo-400">Admin</span></h1>
+                                    {session && (
+                                          <span className={`text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full ${isAdmin ? 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900/50 dark:text-indigo-200' : 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300'}`}>
+                                                {isAdmin ? 'Administrador' : 'Usuário'}
+                                          </span>
+                                    )}
+                              </div>
                               <p className="text-gray-500 dark:text-gray-400 font-medium mb-4 transition-colors">Gestão acadêmica em tempo real</p>
-                              <button
-                                    onClick={handleCreateNew}
-                                    className="flex items-center cursor-pointer gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl font-semibold transition-colors shadow-lg shadow-indigo-200"
-                              >
-                                    <Plus size={20} />
-                                    Novo {view === 'alunos' ? 'Aluno' : 'Professor'}
-                              </button>
+                              <div className="flex flex-wrap items-center gap-3">
+                                    {isAdmin && (
+                                          <button
+                                                type="button"
+                                                onClick={handleCreateNew}
+                                                className="flex items-center cursor-pointer gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl font-semibold transition-colors shadow-lg shadow-indigo-200"
+                                          >
+                                                <Plus size={20} />
+                                                Novo {view === 'alunos' ? 'Aluno' : 'Professor'}
+                                          </button>
+                                    )}
+                                    <button
+                                          type="button"
+                                          onClick={handleLogout}
+                                          className="flex items-center cursor-pointer gap-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 px-5 py-2.5 rounded-xl font-semibold hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                                    >
+                                          <LogOut size={20} />
+                                          Sair
+                                    </button>
+                              </div>
                         </div>
 
                         <div className="flex bg-white dark:bg-gray-800 p-2 rounded-2xl shadow-inner border border-gray-100 dark:border-gray-700 transition-colors">
@@ -202,11 +252,37 @@ export const Dashboard = () => {
                         </div>
                   </header>
 
+                  {view === 'professores' && (
+                        <div className="max-w-7xl mx-auto mb-8 flex flex-col sm:flex-row sm:items-end gap-3">
+                              <div className="flex flex-col gap-1">
+                                    <label htmlFor="area-filter" className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                                          Filtrar por área de conhecimento
+                                    </label>
+                                    <select
+                                          id="area-filter"
+                                          value={disciplineFilter}
+                                          onChange={(e) => setDisciplineFilter(e.target.value)}
+                                          className="max-w-md rounded-xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 px-4 py-2.5 text-gray-900 dark:text-gray-100 shadow-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-500/30"
+                                    >
+                                          <option value="">Todas as áreas</option>
+                                          {AREA_CONHECIMENTO_OPTIONS.map(({ value, label }) => (
+                                                <option key={value} value={value}>
+                                                      {label}
+                                                </option>
+                                          ))}
+                                    </select>
+                              </div>
+                              {isProfLoading && (
+                                    <span className="text-sm text-gray-500 dark:text-gray-400">Carregando…</span>
+                              )}
+                        </div>
+                  )}
+
                   <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
                         <AnimatePresence mode='popLayout'>
                               {view === 'alunos' ?
-                                    alunos.map(a => <EntityCard key={a.id} data={a} type="aluno" onClickCard={handleClickCard} onDelete={() => handleDeleteRequest(a.id, 'aluno')} />) :
-                                    professores.map(p => <EntityCard key={p.id} data={p} type="professor" onClickCard={handleClickCard} onDelete={() => handleDeleteRequest(p.id, 'professor')} />)
+                                    alunos.map(a => <EntityCard key={a.id} data={a} type="aluno" onClickCard={handleClickCard} onDelete={() => handleDeleteRequest(a.id, 'aluno')} canDelete={isAdmin} />) :
+                                    professores.map(p => <EntityCard key={p.id} data={p} type="professor" onClickCard={handleClickCard} onDelete={() => handleDeleteRequest(p.id, 'professor')} canDelete={isAdmin} />)
                               }
                         </AnimatePresence>
                   </div>
@@ -245,6 +321,7 @@ export const Dashboard = () => {
                         type={view === 'alunos' ? 'aluno' : 'professor'}
                         onEdit={handleEdit}
                         onFetchMore={handleFetchMore}
+                        canEdit={isAdmin}
                   />
 
                   <EntityModal

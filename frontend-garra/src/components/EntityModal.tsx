@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Search, Check, GraduationCap } from 'lucide-react';
-import { AreaConhecimento, Professor } from '../interfaces';
+import { AreaConhecimento, Professor, AREA_CONHECIMENTO_OPTIONS, areaConhecimentoLabel } from '../interfaces';
 import { ProfessorService } from '../services/api';
 
 interface Props {
@@ -36,12 +36,12 @@ export const EntityModal = ({ isOpen, onClose, type, initialData, onSave }: Prop
 
     const loadProfessores = async () => {
         try {
-            const res = await ProfessorService.getAll();
+            const res = await ProfessorService.getAll({ page: 0, size: 1000 });
             const todos = res.data.content || [];
-            // Filtra apenas os professores ativos (João Carlos ID 3 e Murilo ID 4)
-            setProfessores(todos.filter(p => p.id === 3 || p.id === 4));
+            setProfessores(todos);
         } catch (error) {
             console.error("Erro ao carregar professores:", error);
+            setProfessores([]);
         }
     };
 
@@ -92,7 +92,7 @@ export const EntityModal = ({ isOpen, onClose, type, initialData, onSave }: Prop
     };
 
     const filteredProfessores = professores.filter(p =>
-        p.nome.toLowerCase().includes(searchProfessor.toLowerCase())
+        (p.nome || '').toLowerCase().includes(searchProfessor.toLowerCase())
     );
 
     const selectedProfessor = professores.find(p => p.id === formData.professorId) || initialData?.professor;
@@ -162,7 +162,7 @@ export const EntityModal = ({ isOpen, onClose, type, initialData, onSave }: Prop
                                             >
                                                 <div className="flex flex-col">
                                                     <span className="text-sm font-semibold text-gray-800 dark:text-gray-200">{p.nome}</span>
-                                                    <span className="text-xs text-gray-500">{p.areaConhecimento}</span>
+                                                    <span className="text-xs text-gray-500">{areaConhecimentoLabel(p.areaConhecimento)}</span>
                                                 </div>
                                                 {(formData.professorId === p.id || initialData?.professor?.id === p.id) && <Check size={16} className="text-cyan-500" />}
                                             </div>
@@ -265,15 +265,9 @@ export const EntityModal = ({ isOpen, onClose, type, initialData, onSave }: Prop
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Área Conhecimento *</label>
                     <select required name="areaConhecimento" value={formData.areaConhecimento || ''} onChange={handleChange} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 p-2 border bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100">
                         <option value="">Selecione...</option>
-                        <option value="MATEMATICA">MATEMÁTICA</option>
-                        <option value="REDAÇÃO">REDAÇÃO</option>
-                        <option value="FÍSICA">FÍSICA</option>
-                        <option value="QUÍMICA">QUÍMICA</option>
-                        <option value="PORTUGUÊS">PORTUGUÊS</option>
-                        <option value="LITERATURA">LITERATURA</option>
-                        <option value="HISTÓRIA">HISTÓRIA</option>
-                        <option value="GEOGRAFIA">GEOGRAFIA</option>
-                        <option value="BIOLOGIA">BIOLOGIA</option>
+                        {AREA_CONHECIMENTO_OPTIONS.map(({ value, label }) => (
+                            <option key={value} value={value}>{label}</option>
+                        ))}
                     </select>
                 </div>
 

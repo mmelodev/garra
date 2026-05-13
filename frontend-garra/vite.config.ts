@@ -7,12 +7,9 @@ export default defineConfig({
   server: {
     port: 5173,
     proxy: {
-      // proxy API calls to backend running on localhost:8080 (default Spring Boot)
-      '/api': {
-        target: 'http://localhost:8080',
-        changeOrigin: true,
-        secure: false,
-      },
+      '/auth': { target: 'http://localhost:8080', changeOrigin: true, secure: false },
+      '/aluno': { target: 'http://localhost:8080', changeOrigin: true, secure: false },
+      '/professor': { target: 'http://localhost:8080', changeOrigin: true, secure: false },
     },
   },
 });

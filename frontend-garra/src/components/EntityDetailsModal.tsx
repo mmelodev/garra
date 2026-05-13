@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Edit, GraduationCap, User, Phone, Mail, MapPin, Calendar, CreditCard, Droplet, Hash, BookOpen } from 'lucide-react';
-import { Aluno, Professor } from '../interfaces';
+import { Aluno, areaConhecimentoLabel } from '../interfaces';
 
 interface Props {
     isOpen: boolean;
@@ -10,9 +10,11 @@ interface Props {
     type: 'aluno' | 'professor';
     onEdit: (data: any) => void;
     onFetchMore: (id: number, type: 'aluno' | 'professor') => Promise<any>;
+    /** Se false, oculta edição (USER não tem POST/PUT no backend). */
+    canEdit?: boolean;
 }
 
-export const EntityDetailsModal = ({ isOpen, onClose, data: incomingData, type, onEdit, onFetchMore }: Props) => {
+export const EntityDetailsModal = ({ isOpen, onClose, data: incomingData, type, onEdit, onFetchMore, canEdit = true }: Props) => {
     const [fetchedData, setFetchedData] = useState<any>(null);
     const [isExpanded, setIsExpanded] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -88,13 +90,13 @@ export const EntityDetailsModal = ({ isOpen, onClose, data: incomingData, type, 
                         <div className="p-8 overflow-y-auto flex-1 bg-white dark:bg-gray-800 transition-colors">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 {renderDetail('Email', data.email, Mail)}
-                                {renderDetail('WhatsApp', data.whatsapp, Phone)}
+                                {renderDetail('WhatsApp', data.whatsapp || data.whasapp, Phone)}
                                 {renderDetail('CPF', data.cpf, Hash)}
                                 {renderDetail('RG', data.rg, CreditCard)}
                                 
                                 {isProf ? (
                                     <>
-                                        {renderDetail('Área de Conhecimento', data.areaConhecimento, BookOpen)}
+                                        {renderDetail('Área de Conhecimento', areaConhecimentoLabel(data.areaConhecimento), BookOpen)}
                                         {renderDetail('Gênero', data.genero, Droplet)}
                                         {renderDetail('Data de Nascimento', formatDate(data.dataNascimento), Calendar)}
                                         {renderDetail('Data de Entrada', formatDate(data.dataDeEntrada), Calendar)}
@@ -129,7 +131,7 @@ export const EntityDetailsModal = ({ isOpen, onClose, data: incomingData, type, 
                                                 <div>
                                                     <p className="text-xs font-bold text-indigo-400 dark:text-indigo-500 tracking-wider uppercase mb-1">Professor Responsável</p>
                                                     <p className="text-indigo-900 dark:text-indigo-100 font-bold">{data.professor.nome}</p>
-                                                    <p className="text-indigo-700/70 dark:text-indigo-300/60 text-xs font-medium uppercase tracking-tight">{data.professor.areaConhecimento}</p>
+                                                    <p className="text-indigo-700/70 dark:text-indigo-300/60 text-xs font-medium uppercase tracking-tight">{areaConhecimentoLabel(data.professor.areaConhecimento)}</p>
                                                 </div>
                                             </div>
                                         )}
@@ -146,7 +148,9 @@ export const EntityDetailsModal = ({ isOpen, onClose, data: incomingData, type, 
                             >
                                 Sair
                             </button>
+                            {canEdit && (
                             <button 
+                                type="button"
                                 onClick={() => {
                                     onClose();
                                     onEdit(data);
@@ -155,6 +159,7 @@ export const EntityDetailsModal = ({ isOpen, onClose, data: incomingData, type, 
                             >
                                 <Edit size={18} /> Editar Cadastro
                             </button>
+                            )}
                             <button 
                                 onClick={async () => {
                                     if (isExpanded) {

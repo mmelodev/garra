@@ -1,13 +1,49 @@
+/** Nomes do enum Java `AreaConhecimento` (JSON / path — usados em `/professor/area/{area}`). */
 export type AreaConhecimento =
     | 'MATEMATICA'
-    | 'REDAÇÃO'
-    | 'FÍSICA'
-    | 'QUÍMICA'
-    | 'PORTUGUÊS'
+    | 'REDACAO'
+    | 'FISICA'
+    | 'QUIMICA'
+    | 'PORTUGUES'
     | 'LITERATURA'
-    | 'HISTÓRIA'
+    | 'HISTORIA'
     | 'GEOGRAFIA'
     | 'BIOLOGIA';
+
+/** Opções para selects e filtro (valor = path/API; label = exibição). */
+export const AREA_CONHECIMENTO_OPTIONS: readonly { value: AreaConhecimento; label: string }[] = [
+    { value: 'MATEMATICA', label: 'Matemática' },
+    { value: 'REDACAO', label: 'Redação' },
+    { value: 'FISICA', label: 'Física' },
+    { value: 'QUIMICA', label: 'Química' },
+    { value: 'PORTUGUES', label: 'Português' },
+    { value: 'LITERATURA', label: 'Literatura' },
+    { value: 'HISTORIA', label: 'História' },
+    { value: 'GEOGRAFIA', label: 'Geografia' },
+    { value: 'BIOLOGIA', label: 'Biologia' },
+];
+
+export function areaConhecimentoLabel(area: string | undefined | null): string {
+    if (area == null || area === '') return '';
+    const found = AREA_CONHECIMENTO_OPTIONS.find((o) => o.value === area);
+    return found?.label ?? area;
+}
+
+/** Resposta de `GET /professor/area/{area}` (`DadosProfessorG` no backend). */
+export interface DadosProfessorG {
+    id: number;
+    nome: string;
+    areaConhecimento: AreaConhecimento;
+    genero?: string;
+    dataNascimento?: string;
+    rg?: string;
+    cpf?: string;
+    email: string;
+    whatsapp: string;
+    dataDeEntrada?: string;
+    dataDeSaida?: string;
+    descricao?: string;
+}
 
 export interface Aluno {
     id: number;
