@@ -24,6 +24,7 @@ public class TokenService {
                     .withIssuer("API garra")
                     .withSubject(usuario.getLogin())
                     .withClaim("id", usuario.getId())
+                    .withClaim("role", usuario.getRole().name())
                     .withExpiresAt(dataExpiracao())
                     .sign(algortimo);
         } catch (JWTVerificationException exception){
