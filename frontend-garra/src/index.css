@@ -1,0 +1,20 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+body {
+  @apply bg-slate-50 antialiased;
+}
+
+/* Personalização para scrollbars bonitas */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-300 rounded-full;
+}
+
+@layer base {
+  input, select, textarea {
+    @apply dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100;
+  }
+}
