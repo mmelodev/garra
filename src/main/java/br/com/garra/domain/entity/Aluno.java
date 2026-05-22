@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import br.com.garra.domain.entity.Professor;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Table(name="aluno")
 @Entity(name="Aluno")
@@ -27,7 +28,7 @@ public class Aluno {
     @Column(nullable = false)
     private String whatsapp;
     @Column(nullable = false)
-    private Boolean possuiBolsa;
+    private boolean possuiBolsa;
     private LocalDate dataMatricula;
     @Column(nullable = false)
     private String rg;
@@ -38,7 +39,18 @@ public class Aluno {
     @JoinColumn(name = "professor_id")
     private Professor professor;
 
+    @OneToMany(mappedBy = "aluno",fetch = FetchType.LAZY)
+    private List<FinanceiroEntrada> financeiroEntrada;
+
     public Aluno (){
+    }
+
+    public List<FinanceiroEntrada> getFinanceiroEntrada() {
+        return financeiroEntrada;
+    }
+
+    public void setFinanceiroEntrada(List<FinanceiroEntrada> financeiroEntrada) {
+        this.financeiroEntrada = financeiroEntrada;
     }
 
     public Aluno (DadosAluno aluno) {
@@ -50,7 +62,7 @@ public class Aluno {
         this.nomeMae = aluno.nomeMae();
         this.nomePai = aluno.nomePai();
         this.whatsapp = aluno.whatsapp();
-        this.possuiBolsa = Boolean.valueOf(aluno.possuiBolsa());
+        this.possuiBolsa = Boolean.parseBoolean(aluno.possuiBolsa());
         this.dataMatricula = LocalDate.parse(aluno.dataMatricula());
         this.rg = aluno.rg();
         this.cpf = aluno.cpf();

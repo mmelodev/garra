@@ -9,5 +9,4 @@ public interface AlunoRepository extends JpaRepository<Aluno, Long> {
     //metodos
     Page<Aluno> findAllByAtivoTrue(Pageable paginacao);
 
-
 }

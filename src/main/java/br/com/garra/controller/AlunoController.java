@@ -8,6 +8,7 @@ import br.com.garra.domain.entity.*;
 import br.com.garra.domain.model.DadosAluno;
 import br.com.garra.repository.AlunoRepository;
 import br.com.garra.repository.ProfessorRepository;
+import br.com.garra.service.AlunoService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -31,15 +32,15 @@ public class AlunoController {
     @Autowired
     private ProfessorRepository professorRepository;
 
+    @Autowired
+    private AlunoService alunoService;
+
     @PostMapping
     @Transactional
     public ResponseEntity cadastroAluno(@RequestBody @Valid DadosAluno dados, UriComponentsBuilder uriBuilder){
-        var aluno = new Aluno(dados);
-        repository.save(aluno);
-        Professor professor = professorRepository.getReferenceById(dados.professorId());
-        aluno.setProfessor(professor);
-        var uri = uriBuilder.path("/aluno/{id}").buildAndExpand(aluno.getId()).toUri();
-        return ResponseEntity.created(uri).body(new DadosAlunoG(aluno));
+        DadosAlunoG aluno = alunoService.cadastroAluno(dados);
+        var uri = uriBuilder.path("/aluno/{id}").buildAndExpand(aluno.id()).toUri();
+        return ResponseEntity.created(uri).body(aluno);
     }
 
     @GetMapping
