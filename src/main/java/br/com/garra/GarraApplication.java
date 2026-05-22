@@ -12,5 +12,4 @@ public class GarraApplication {
 		SpringApplication.run(GarraApplication.class, args);
 	}
 
-
 }

@@ -8,6 +8,7 @@ import br.com.garra.domain.entity.*;
 import br.com.garra.domain.model.DadosAluno;
 import br.com.garra.repository.AlunoRepository;
 import br.com.garra.repository.ProfessorRepository;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 @CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/aluno")
+@SecurityRequirement(name = "bearer-key")
 public class AlunoController {
 
     @Autowired

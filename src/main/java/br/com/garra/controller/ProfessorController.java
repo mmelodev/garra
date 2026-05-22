@@ -7,6 +7,7 @@ import br.com.garra.domain.entity.Professor;
 import br.com.garra.domain.model.DadosProfessor;
 import br.com.garra.repository.ProfessorRepository;
 import br.com.garra.service.ProfessorService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/professor")
+@SecurityRequirement(name = "bearer-key")
 public class ProfessorController {
 
     @Autowired

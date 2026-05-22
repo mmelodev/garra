@@ -7,6 +7,7 @@ import br.com.garra.domain.enums.UserRole;
 import br.com.garra.infra.security.TokenJWT;
 import br.com.garra.repository.UsuarioRepository;
 import br.com.garra.service.TokenService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/auth")
+@SecurityRequirement(name = "bearer-key")
 public class AutenticacaoController {
 
     @Autowired
