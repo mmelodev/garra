@@ -1,5 +1,6 @@
 package br.com.garra.infra.exception;
 
+import br.com.garra.exeption.ValidacaoException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -19,6 +20,11 @@ public class HttpExceptionHandler {
     public ResponseEntity status400(MethodArgumentNotValidException ex){
         var erros = ex.getFieldErrors();
         return ResponseEntity.badRequest().body(erros.stream().map(errosValidacao::new).toList());
+    }
+
+    @ExceptionHandler(ValidacaoException.class) //400
+    public ResponseEntity trataErroValidacoes(ValidacaoException ex) {
+        return ResponseEntity.badRequest().body(ex.getMessage());
     }
 
     private record errosValidacao(String campo, String mensagem){

@@ -5,6 +5,7 @@ import br.com.garra.domain.entity.Aluno;
 import br.com.garra.domain.entity.FinanceiroEntrada;
 import br.com.garra.domain.enums.FinanceiroEntradaCategoria;
 import br.com.garra.domain.model.DadosFinanceiroEntrada;
+import br.com.garra.domain.validation.ValidarEntradaFinanceira;
 import br.com.garra.exeption.ValidacaoException;
 import br.com.garra.repository.AlunoRepository;
 import br.com.garra.repository.FinanceiroEntradaRepository;
@@ -21,6 +22,8 @@ public class FinanceiroService {
     private FinanceiroEntradaRepository entradaRepository;
     @Autowired
     private AlunoRepository alunoRepository;
+    @Autowired
+    private List<ValidarEntradaFinanceira> validadores;
     private FinanceiroEntrada entrada;
 
     public DadosFinanceiroEntradaG cadastrarEntrada(DadosFinanceiroEntrada dados) {
@@ -34,17 +37,18 @@ public class FinanceiroService {
                     throw new RuntimeException(e);
                 }
             }
+
             Aluno aluno = alunoRepository.findById(dados.alunoId()).orElseThrow(() -> new ValidationException("Nenhum aluno encontrado."));
-            System.out.println("Processando mensalidade para o aluno: " + dados.alunoId());
             financeiroEntrada.setAluno(aluno);
 
-            //corrigir como respostas de erro aparecem no retorno após execução
-
             //restante das RN a partir da mensalidade
+
         }
 
-        financeiroEntrada.setCategoria(dados.categoria());
+        validadores.forEach(v -> v.validar(dados));
+
         financeiroEntrada.setData(dados.data());
+        financeiroEntrada.setCategoria(dados.categoria());
         financeiroEntrada.setDescricao(dados.descricao());
         financeiroEntrada.setValor(dados.valor());
 
