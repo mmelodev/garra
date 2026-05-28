@@ -11,7 +11,10 @@ import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.temporal.TemporalAdjuster;
+import java.time.temporal.TemporalAdjusters;
 
 @Component
 public class MesmoAlunoNoMes implements ValidarEntradaFinanceira {
@@ -21,32 +24,19 @@ public class MesmoAlunoNoMes implements ValidarEntradaFinanceira {
     private AlunoRepository alunoRepository;
 
     @Override
-    public void validar(DadosFinanceiroEntrada dados) throws ValidacaoException {
+    public void validar(DadosFinanceiroEntrada dados) {
         if(dados.alunoId() == null){
             throw new ValidacaoException("ID do aluno não pode ser nulo");
-        } else {
-            if(dados.categoria() == FinanceiroEntradaCategoria.MENSALIDADE){
-                Aluno aluno = alunoRepository.findById(dados.alunoId()).orElseThrow(() -> new ValidationException("Nenhum aluno encontrado."));
-                FinanceiroEntrada entrada = entradaRepository.findById(aluno.getId());
-                if(entrada.getData().getMonth().equals(LocalDateTime.now().getMonth())){
-                    throw new ValidationException("Não pode lançar outra mensalidade para esse mês");
-                }
-
-//                if (dados.alunoId().equals(aluno.getId()) && !dados.data().getMonth().equals(LocalDateTime.now().getMonth())){
-//                    throw new ValidationException("Não pode lançar outra mensalidade para esse mês");
-//                }
-            }
         }
-
-//        if (dados.categoria() == FinanceiroEntradaCategoria.MENSALIDADE && dados.alunoId().equals(aluno.getId()) && dados.data().isEqual(aluno.getDataMatricula().withMonth(aluno.getDataMatricula().getMonthValue()).atStartOfDay())){
-//            if (dados.alunoId() == null){
-//                try {
-//                    throw new ValidacaoException("ID do aluno não pode ser nulo");
-//                } catch (ValidacaoException e) {
-//                    throw new RuntimeException(e);
-//                }
-//            }
-//            financeiroEntrada.setAluno(aluno);
-//        }
+        if(dados.categoria() == FinanceiroEntradaCategoria.MENSALIDADE){
+                Aluno aluno = alunoRepository.findById(dados.alunoId()).orElseThrow(() -> new ValidationException("Nenhum aluno encontrado."));
+                var data = dados.data();
+                LocalDateTime primeiroDia = data.with(TemporalAdjusters.firstDayOfMonth());
+                LocalDateTime ultimoDia = data.with(TemporalAdjusters.lastDayOfMonth());
+                var entrada = entradaRepository.existsByAlunoIdAndDataBetween(aluno.getId(), primeiroDia, ultimoDia);
+                if(entrada){
+                    throw new ValidacaoException("Não pode lançar outra mensalidade para esse mês");
+                }
+        }
     }
 }

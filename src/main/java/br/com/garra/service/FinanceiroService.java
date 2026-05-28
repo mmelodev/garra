@@ -26,7 +26,7 @@ public class FinanceiroService {
     private List<ValidarEntradaFinanceira> validadores;
     private FinanceiroEntrada entrada;
 
-    public DadosFinanceiroEntradaG cadastrarEntrada(DadosFinanceiroEntrada dados) {
+    public DadosFinanceiroEntradaG cadastrarEntrada(DadosFinanceiroEntrada dados){
         FinanceiroEntrada financeiroEntrada = new FinanceiroEntrada();
 
         if (dados.categoria() == FinanceiroEntradaCategoria.MENSALIDADE){
