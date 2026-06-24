@@ -33,6 +33,7 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.POST, "/aluno").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/aluno").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/financeiro/entradas").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/financeiro/saidas").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/professor").hasAnyRole("USER", "ADMIN")
                         .requestMatchers(HttpMethod.GET, "/aluno").hasAnyRole("USER", "ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/professor").hasRole("ADMIN")

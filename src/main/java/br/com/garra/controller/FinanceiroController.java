@@ -1,9 +1,11 @@
 package br.com.garra.controller;
 
 import br.com.garra.domain.dto.DadosFinanceiroEntradaG;
+import br.com.garra.domain.dto.DadosFinanceiroSaidaG;
 import br.com.garra.domain.entity.Aluno;
 import br.com.garra.domain.entity.FinanceiroEntrada;
 import br.com.garra.domain.model.DadosFinanceiroEntrada;
+import br.com.garra.domain.model.DadosFinanceiroSaida;
 import br.com.garra.exeption.ValidacaoException;
 import br.com.garra.repository.AlunoRepository;
 import br.com.garra.repository.FinanceiroEntradaRepository;
@@ -34,10 +36,18 @@ public class FinanceiroController {
 
     @PostMapping("/entradas")
     @Transactional
-    public ResponseEntity entradas (@RequestBody @Valid DadosFinanceiroEntrada entrada, UriComponentsBuilder uriComponentsBuilder){
+    public ResponseEntity<DadosFinanceiroEntradaG> entradas (@RequestBody @Valid DadosFinanceiroEntrada entrada, UriComponentsBuilder uriComponentsBuilder){
         DadosFinanceiroEntradaG entradaN = service.cadastrarEntrada(entrada);
         var uri = uriComponentsBuilder.path("financeiro/entradas/{id}").buildAndExpand(entradaN).toUri();
         return ResponseEntity.created(uri).body(entradaN);
+    }
+
+    @PostMapping("/saidas")
+    @Transactional
+    public ResponseEntity<DadosFinanceiroSaidaG> saidas (@RequestBody @Valid DadosFinanceiroSaida saida, UriComponentsBuilder uriComponentsBuilder){
+        DadosFinanceiroSaidaG saidaN = service.cadastrarSaida(saida);
+        var uri = uriComponentsBuilder.path("financeiro/saidas/{id}").buildAndExpand(saidaN).toUri();
+        return ResponseEntity.created(uri).body(saidaN);
     }
 
 }

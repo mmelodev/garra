@@ -2,6 +2,7 @@ package br.com.garra.domain.entity;
 
 import br.com.garra.domain.enums.FinanceiroEntradaCategoria;
 import br.com.garra.domain.enums.FinanceiroEntradaCategoria;
+import br.com.garra.domain.enums.StatusMensalidade;
 import br.com.garra.domain.model.DadosFinanceiroEntrada;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -24,9 +25,12 @@ public class FinanceiroEntrada {
     private Long id;
     private double valor;
     private LocalDateTime data;
+    private LocalDateTime dataVencimento;
     private String descricao;
     @Enumerated(EnumType.STRING)
     private FinanceiroEntradaCategoria categoria;
+    @Enumerated(EnumType.STRING)
+    private StatusMensalidade statusMensalidade;
 
     public FinanceiroEntrada (DadosFinanceiroEntrada entrada){
         this.valor = entrada.valor();
@@ -85,6 +89,22 @@ public class FinanceiroEntrada {
 
     public void setCategoria(FinanceiroEntradaCategoria categoria) {
         this.categoria = categoria;
+    }
+
+    public StatusMensalidade getStatusMensalidade() {
+        return statusMensalidade;
+    }
+
+    public void setStatusMensalidade(StatusMensalidade statusMensalidade) {
+        this.statusMensalidade = statusMensalidade;
+    }
+
+    public LocalDateTime getDataVencimento() {
+        return dataVencimento;
+    }
+
+    public void setDataVencimento(LocalDateTime dataVencimento) {
+        this.dataVencimento = dataVencimento;
     }
 
     public FinanceiroEntrada() {}
