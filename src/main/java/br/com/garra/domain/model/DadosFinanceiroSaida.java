@@ -7,6 +7,6 @@ import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
 
-public record DadosFinanceiroSaida(@NotNull double valor, @NotNull LocalDateTime data, String descricao, @NotNull FinanceiroSaidaCategoria categoria, @NotNull TipoFinanceiroSaida tipoFinanceiroSaida) {
+public record DadosFinanceiroSaida(@NotNull double valor, Long contaId, @NotNull LocalDateTime data, String descricao, @NotNull FinanceiroSaidaCategoria categoria, @NotNull TipoFinanceiroSaida tipoFinanceiroSaida) {
 
 }

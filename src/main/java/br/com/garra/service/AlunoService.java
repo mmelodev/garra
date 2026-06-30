@@ -19,7 +19,7 @@ public class AlunoService {
 
     public DadosAlunoG cadastroAluno (DadosAluno dados){
         Professor professor = professorRepository.getReferenceById(dados.professorId());
-        Aluno aluno = new Aluno((dados));
+        Aluno aluno = new Aluno(dados);
         aluno.setProfessor(professor);
         Aluno alunoSalvo = alunoRepository.save(aluno);
         return new DadosAlunoG(alunoSalvo);

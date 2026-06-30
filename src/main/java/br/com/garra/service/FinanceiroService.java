@@ -1,18 +1,22 @@
 package br.com.garra.service;
 
+import br.com.garra.domain.dto.DadosContaG;
 import br.com.garra.domain.dto.DadosFinanceiroEntradaG;
 import br.com.garra.domain.dto.DadosFinanceiroSaidaG;
 import br.com.garra.domain.entity.Aluno;
+import br.com.garra.domain.entity.FinanceiroConta;
 import br.com.garra.domain.entity.FinanceiroEntrada;
 import br.com.garra.domain.entity.FinanceiroSaida;
 import br.com.garra.domain.enums.FinanceiroEntradaCategoria;
 import br.com.garra.domain.enums.FinanceiroSaidaCategoria;
 import br.com.garra.domain.enums.StatusMensalidade;
+import br.com.garra.domain.model.DadosFinanceiroConta;
 import br.com.garra.domain.model.DadosFinanceiroEntrada;
 import br.com.garra.domain.model.DadosFinanceiroSaida;
 import br.com.garra.domain.validation.ValidarEntradaFinanceira;
 import br.com.garra.exeption.ValidacaoException;
 import br.com.garra.repository.AlunoRepository;
+import br.com.garra.repository.ContaRepository;
 import br.com.garra.repository.FinanceiroEntradaRepository;
 import br.com.garra.repository.FinanceiroSaidaRepository;
 import jakarta.validation.ValidationException;
@@ -33,7 +37,8 @@ public class FinanceiroService {
     private AlunoRepository alunoRepository;
     @Autowired
     private List<ValidarEntradaFinanceira> validadores;
-    private FinanceiroEntrada entrada;
+    @Autowired
+    private ContaRepository contaRepository;
 
     public DadosFinanceiroEntradaG cadastrarEntrada(DadosFinanceiroEntrada dados){
         FinanceiroEntrada financeiroEntrada = new FinanceiroEntrada();
@@ -70,7 +75,16 @@ public class FinanceiroService {
         financeiroEntrada.setDescricao(dados.descricao());
         financeiroEntrada.setValor(dados.valor());
 
-        FinanceiroEntrada entrada = entradaRepository.save(financeiroEntrada);
+        FinanceiroEntrada entrada = entradaRepository.save (financeiroEntrada);
+
+        if (dados.statusMensalidade() == StatusMensalidade.PAGO){
+            FinanceiroConta conta = new FinanceiroConta();
+            var valorAtual = dados.valor();
+            var saldoAtual = conta.getSaldo();
+            var novoSaldo = valorAtual += saldoAtual;
+            System.out.println(novoSaldo);
+            financeiroEntrada.setConta(dados.conta());
+        }
         return new DadosFinanceiroEntradaG(entrada);
     }
 
@@ -85,5 +99,12 @@ public class FinanceiroService {
 
         FinanceiroSaida saida = saidaRepository.save(financeiroSaida);
         return new DadosFinanceiroSaidaG(saida);
+    }
+
+    public DadosContaG balancoFinanceiro(DadosFinanceiroConta dadosConta, DadosFinanceiroEntrada dadosEntrada, DadosFinanceiroSaida dadosSaida){
+        FinanceiroConta financeiroConta = new FinanceiroConta();
+
+        FinanceiroConta conta = contaRepository.save(financeiroConta);
+        return new DadosContaG(conta);
     }
 }

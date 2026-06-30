@@ -16,7 +16,6 @@ import java.util.List;
 
 @Entity(name = "FinanceiroEntrada")
 @Table(name = "financeiro_entrada")
-@Getter
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
 public class FinanceiroEntrada {
@@ -42,6 +41,18 @@ public class FinanceiroEntrada {
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
     private Aluno aluno;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
+    private FinanceiroConta conta;
+
+    public FinanceiroConta getConta() {
+        return conta;
+    }
+
+    public void setConta(FinanceiroConta conta) {
+        this.conta = conta;
+    }
 
     public Aluno getAluno() {
         return aluno;

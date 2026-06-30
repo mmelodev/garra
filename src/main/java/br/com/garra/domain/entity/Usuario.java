@@ -1,7 +1,9 @@
 package br.com.garra.domain.entity;
 
 import br.com.garra.domain.enums.UserRole;
+import br.com.garra.domain.model.DadosRegistro;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -17,7 +19,6 @@ import java.util.List;
 @Entity(name = "Usuario")
 @Table(name = "usuarios")
 @AllArgsConstructor
-@Getter
 @EqualsAndHashCode(of = "id")
 public class Usuario implements UserDetails {
     @Id
@@ -29,13 +30,25 @@ public class Usuario implements UserDetails {
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "conta_id", referencedColumnName = "id")
+    private FinanceiroConta conta;
+
     public Usuario() {}
 
-    public Usuario (String login, String senha, UserRole role) {
+    public Usuario (DadosRegistro dados) {
+        this.login = dados.login();
+        this.senha = dados.senha();
+        this.role = dados.role();
+    }
+
+    public Usuario(String login, String encrPass, UserRole role) {
         this.login = login;
-        this.senha = senha;
+        this.senha = encrPass;
         this.role = role;
     }
+
+
 
     public UserRole getRole() {
         return role;
@@ -81,5 +94,21 @@ public class Usuario implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public String getLogin() {
+        return login;
+    }
+
+    public String getSenha() {
+        return senha;
+    }
+
+    public FinanceiroConta getConta() {
+        return conta;
+    }
+
+    public void setConta(FinanceiroConta conta) {
+        this.conta = conta;
     }
 }

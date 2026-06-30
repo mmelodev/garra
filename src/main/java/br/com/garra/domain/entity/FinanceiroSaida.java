@@ -3,6 +3,7 @@ package br.com.garra.domain.entity;
 import br.com.garra.domain.enums.FinanceiroSaidaCategoria;
 import br.com.garra.domain.enums.TipoFinanceiroSaida;
 import br.com.garra.domain.model.DadosFinanceiroSaida;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -12,7 +13,6 @@ import java.time.LocalDateTime;
 
 @Entity(name = "FinanceiroSaida")
 @Table(name = "financeiro_saida")
-@Getter
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
 public class FinanceiroSaida {
@@ -26,6 +26,10 @@ public class FinanceiroSaida {
     private FinanceiroSaidaCategoria categoria;
     @Enumerated(EnumType.STRING)
     private TipoFinanceiroSaida tipoFinanceiroSaida;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
+    private FinanceiroConta conta;
 
     public FinanceiroSaida(){}
 
@@ -43,6 +47,14 @@ public class FinanceiroSaida {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public FinanceiroConta getConta() {
+        return conta;
+    }
+
+    public void setConta(FinanceiroConta conta) {
+        this.conta = conta;
     }
 
     public double getValor() {
