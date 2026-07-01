@@ -3,10 +3,7 @@ package br.com.garra.service;
 import br.com.garra.domain.dto.DadosContaG;
 import br.com.garra.domain.dto.DadosFinanceiroEntradaG;
 import br.com.garra.domain.dto.DadosFinanceiroSaidaG;
-import br.com.garra.domain.entity.Aluno;
-import br.com.garra.domain.entity.FinanceiroConta;
-import br.com.garra.domain.entity.FinanceiroEntrada;
-import br.com.garra.domain.entity.FinanceiroSaida;
+import br.com.garra.domain.entity.*;
 import br.com.garra.domain.enums.FinanceiroEntradaCategoria;
 import br.com.garra.domain.enums.FinanceiroSaidaCategoria;
 import br.com.garra.domain.enums.StatusMensalidade;
@@ -21,6 +18,9 @@ import br.com.garra.repository.FinanceiroEntradaRepository;
 import br.com.garra.repository.FinanceiroSaidaRepository;
 import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -41,31 +41,23 @@ public class FinanceiroService {
     private ContaRepository contaRepository;
 
     public DadosFinanceiroEntradaG cadastrarEntrada(DadosFinanceiroEntrada dados){
+
+        SecurityContext context = SecurityContextHolder.getContext();
+        Authentication authentication = context.getAuthentication();
+
         FinanceiroEntrada financeiroEntrada = new FinanceiroEntrada();
 
-        if (dados.categoria() == FinanceiroEntradaCategoria.MENSALIDADE){
-            if (dados.alunoId() == null){
-                try {
-                    throw new ValidacaoException("ID do aluno não pode ser nulo");
-                } catch (ValidacaoException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-
-            Aluno aluno = alunoRepository.findById(dados.alunoId()).orElseThrow(() -> new ValidationException("Nenhum aluno encontrado."));
-
-            if(dados.statusMensalidade() != StatusMensalidade.PAGO){
-                var data = dados.dataVencimento();
-                LocalDateTime dataAtual = LocalDateTime.now();
-
-                if(dataAtual.isAfter(data)){
-                    var atrasado = StatusMensalidade.ATRASADO;
-                    financeiroEntrada.setStatusMensalidade(atrasado);
-                }
-            }
-
-            financeiroEntrada.setAluno(aluno);
+        Object principal = authentication.getPrincipal();
+        Usuario usuario = null;
+        if (principal instanceof Usuario) {
+            usuario = (Usuario) principal;
+            System.out.println(usuario.getLogin());
+            System.out.println(usuario.getRole());
+            System.out.println(usuario.getConta().getId());
+            financeiroEntrada.setConta(usuario.getConta());
         }
+
+        FinanceiroConta conta = usuario.getConta();
 
         validadores.forEach(v -> v.validar(dados));
 
@@ -74,22 +66,49 @@ public class FinanceiroService {
         financeiroEntrada.setCategoria(dados.categoria());
         financeiroEntrada.setDescricao(dados.descricao());
         financeiroEntrada.setValor(dados.valor());
+        financeiroEntrada.setStatusMensalidade(dados.statusMensalidade());
 
-        FinanceiroEntrada entrada = entradaRepository.save (financeiroEntrada);
+        if (dados.categoria() == FinanceiroEntradaCategoria.MENSALIDADE) {
+            Aluno aluno = alunoRepository.findById(dados.alunoId())
+                    .orElseThrow(() -> new ValidacaoException("Aluno não encontrado"));
+            financeiroEntrada.setAluno(aluno);
 
-        if (dados.statusMensalidade() == StatusMensalidade.PAGO){
-            FinanceiroConta conta = new FinanceiroConta();
-            var valorAtual = dados.valor();
-            var saldoAtual = conta.getSaldo();
-            var novoSaldo = valorAtual += saldoAtual;
-            System.out.println(novoSaldo);
-            financeiroEntrada.setConta(dados.conta());
+            if (dados.statusMensalidade() != StatusMensalidade.PAGO) {
+                LocalDateTime dataAtual = LocalDateTime.now();
+                if (dataAtual.isAfter(dados.dataVencimento())) {
+                    financeiroEntrada.setStatusMensalidade(StatusMensalidade.ATRASADO);
+                }
+            }
         }
+
+        FinanceiroEntrada entrada = entradaRepository.save(financeiroEntrada);
+
+        if (dados.statusMensalidade() == StatusMensalidade.PAGO || !(dados.categoria() == FinanceiroEntradaCategoria.MENSALIDADE)){
+            double saldoNovo = conta.getSaldo() + dados.valor();
+            conta.setSaldo(saldoNovo);
+            contaRepository.save(conta);
+        }
+
         return new DadosFinanceiroEntradaG(entrada);
     }
 
     public DadosFinanceiroSaidaG cadastrarSaida(DadosFinanceiroSaida dados){
         FinanceiroSaida financeiroSaida = new FinanceiroSaida();
+
+        SecurityContext context = SecurityContextHolder.getContext();
+        Authentication authentication = context.getAuthentication();
+
+        Object principal = authentication.getPrincipal();
+        Usuario usuario = null;
+        if (principal instanceof Usuario) {
+            usuario = (Usuario) principal;
+            System.out.println(usuario.getLogin());
+            System.out.println(usuario.getRole());
+            System.out.println(usuario.getConta().getId());
+            financeiroSaida.setConta(usuario.getConta());
+        }
+
+        FinanceiroConta conta = usuario.getConta();
 
         financeiroSaida.setValor(dados.valor());
         financeiroSaida.setData(dados.data());
@@ -98,13 +117,15 @@ public class FinanceiroService {
         financeiroSaida.setTipoFinanceiroSaida(dados.tipoFinanceiroSaida());
 
         FinanceiroSaida saida = saidaRepository.save(financeiroSaida);
+
+        if (conta.getSaldo() < dados.valor()) {
+            throw new ValidacaoException("Saldo insuficiente. Saldo atual: R$ " + conta.getSaldo());
+        }
+
+        double saldoNovo = conta.getSaldo() - dados.valor();
+        conta.setSaldo(saldoNovo);
+        contaRepository.save(conta);
+
         return new DadosFinanceiroSaidaG(saida);
-    }
-
-    public DadosContaG balancoFinanceiro(DadosFinanceiroConta dadosConta, DadosFinanceiroEntrada dadosEntrada, DadosFinanceiroSaida dadosSaida){
-        FinanceiroConta financeiroConta = new FinanceiroConta();
-
-        FinanceiroConta conta = contaRepository.save(financeiroConta);
-        return new DadosContaG(conta);
     }
 }

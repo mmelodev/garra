@@ -48,8 +48,6 @@ public class Usuario implements UserDetails {
         this.role = role;
     }
 
-
-
     public UserRole getRole() {
         return role;
     }

@@ -50,11 +50,8 @@ public class AutenticacaoController {
     @PostMapping("/register")
     @Transactional
     public ResponseEntity register (@RequestBody @Valid DadosRegistro registro){
-
         if(this.repository.findByLogin(registro.login()) != null) return ResponseEntity.badRequest().build();
-
         usuarioService.cadastroUsuario(registro);
-
         return ResponseEntity.ok().build();
     }
 }

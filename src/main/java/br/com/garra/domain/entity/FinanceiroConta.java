@@ -26,7 +26,8 @@ public class FinanceiroConta {
     @OneToMany(mappedBy = "conta",fetch = FetchType.LAZY)
     private List<FinanceiroSaida> financeiroSaida;
 
-    @OneToOne (mappedBy = "conta")
+    @OneToOne
+    @JoinColumn(name = "usuario_id", referencedColumnName = "id")
     private Usuario usuario;
 
     public FinanceiroConta(){}
