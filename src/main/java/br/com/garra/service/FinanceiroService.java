@@ -1,8 +1,6 @@
 package br.com.garra.service;
 
-import br.com.garra.domain.dto.DadosContaG;
-import br.com.garra.domain.dto.DadosFinanceiroEntradaG;
-import br.com.garra.domain.dto.DadosFinanceiroSaidaG;
+import br.com.garra.domain.dto.*;
 import br.com.garra.domain.entity.*;
 import br.com.garra.domain.enums.FinanceiroEntradaCategoria;
 import br.com.garra.domain.enums.FinanceiroSaidaCategoria;
@@ -18,6 +16,9 @@ import br.com.garra.repository.FinanceiroEntradaRepository;
 import br.com.garra.repository.FinanceiroSaidaRepository;
 import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -57,12 +58,29 @@ public class FinanceiroService {
             financeiroEntrada.setConta(usuario.getConta());
         }
 
+        if (usuario == null) {
+            throw new ValidacaoException("Usuário não autenticado");
+        }
+
         FinanceiroConta conta = usuario.getConta();
 
         validadores.forEach(v -> v.validar(dados));
 
-        financeiroEntrada.setData(dados.data());
+        if(dados.data() != null){
+            throw new ValidacaoException("Operação inválida, não é possível alterar data atual.");
+        }
+
+        if(dados.categoria() == FinanceiroEntradaCategoria.OUTROS){
+            if(dados.descricao() == null){
+                throw new ValidacaoException("Descrição é obrigatória nesse caso.");
+            }
+        }
+
+        var dataAtual = LocalDateTime.now();
+        financeiroEntrada.setData(dataAtual);
         financeiroEntrada.setDataVencimento(dados.dataVencimento());
+        financeiroEntrada.setDataEvento(dados.dataEvento());
+        financeiroEntrada.setDataFimEvento(dados.dataFimEvento());
         financeiroEntrada.setCategoria(dados.categoria());
         financeiroEntrada.setDescricao(dados.descricao());
         financeiroEntrada.setValor(dados.valor());
@@ -74,7 +92,6 @@ public class FinanceiroService {
             financeiroEntrada.setAluno(aluno);
 
             if (dados.statusMensalidade() != StatusMensalidade.PAGO) {
-                LocalDateTime dataAtual = LocalDateTime.now();
                 if (dataAtual.isAfter(dados.dataVencimento())) {
                     financeiroEntrada.setStatusMensalidade(StatusMensalidade.ATRASADO);
                 }
@@ -92,6 +109,33 @@ public class FinanceiroService {
         return new DadosFinanceiroEntradaG(entrada);
     }
 
+    public Page<DadosListagemEntradas> listarEntradas (@PageableDefault (size = 10, sort = {"data"}) Pageable paginacao){
+        SecurityContext context = SecurityContextHolder.getContext();
+        Authentication authentication = context.getAuthentication();
+        FinanceiroEntrada financeiroEntrada = new FinanceiroEntrada();
+
+        Object principal = authentication.getPrincipal();
+        Usuario usuario = null;
+        if (principal instanceof Usuario) {
+            usuario = (Usuario) principal;
+            System.out.println(usuario.getLogin());
+            System.out.println(usuario.getRole());
+            System.out.println(usuario.getConta().getId());
+            financeiroEntrada.setConta(usuario.getConta());
+        }
+
+        if (usuario == null) {
+            throw new ValidacaoException("Usuário não autenticado");
+        }
+
+        return entradaRepository.findAll(paginacao).map(DadosListagemEntradas::new);
+    }
+
+    public DadosFinanceiroEntradaG infoEntrada(Long id){
+        FinanceiroEntrada financeiroEntrada = entradaRepository.getReferenceById(id);
+        return new DadosFinanceiroEntradaG(financeiroEntrada);
+    }
+
     public DadosFinanceiroSaidaG cadastrarSaida(DadosFinanceiroSaida dados){
         FinanceiroSaida financeiroSaida = new FinanceiroSaida();
 
@@ -106,6 +150,10 @@ public class FinanceiroService {
             System.out.println(usuario.getRole());
             System.out.println(usuario.getConta().getId());
             financeiroSaida.setConta(usuario.getConta());
+        }
+
+        if (usuario == null) {
+            throw new ValidacaoException("Usuário não autenticado");
         }
 
         FinanceiroConta conta = usuario.getConta();
@@ -127,5 +175,55 @@ public class FinanceiroService {
         contaRepository.save(conta);
 
         return new DadosFinanceiroSaidaG(saida);
+    }
+
+    public Page<DadosListagemSaida> listarSaidas (@PageableDefault (size = 10, sort = {"data"}) Pageable paginacao){
+        SecurityContext context = SecurityContextHolder.getContext();
+        Authentication authentication = context.getAuthentication();
+        FinanceiroSaida financeiroSaida = new FinanceiroSaida();
+
+        Object principal = authentication.getPrincipal();
+        Usuario usuario = null;
+        if (principal instanceof Usuario) {
+            usuario = (Usuario) principal;
+            System.out.println(usuario.getLogin());
+            System.out.println(usuario.getRole());
+            System.out.println(usuario.getConta().getId());
+            financeiroSaida.setConta(usuario.getConta());
+        }
+
+        if (usuario == null) {
+            throw new ValidacaoException("Usuário não autenticado");
+        }
+
+        return saidaRepository.findAll(paginacao).map(DadosListagemSaida::new);
+    }
+
+    public DadosFinanceiroSaidaG infoSaida (Long id){
+        FinanceiroSaida saida = saidaRepository.getReferenceById(id);
+        return new DadosFinanceiroSaidaG(saida);
+    }
+
+    public DadosContaG contaSaldo(){
+        SecurityContext context = SecurityContextHolder.getContext();
+        Authentication authentication = context.getAuthentication();
+
+        Object principal = authentication.getPrincipal();
+        Usuario usuario = null;
+        if (principal instanceof Usuario) {
+            usuario = (Usuario) principal;
+            System.out.println(usuario.getLogin());
+            System.out.println(usuario.getRole());
+            System.out.println(usuario.getConta().getId());
+        }
+
+        if (usuario == null) {
+            throw new ValidacaoException("Usuário não autenticado");
+        }
+
+        FinanceiroConta conta = contaRepository.findByUsuarioId(usuario.getId())
+                .orElseThrow(() -> new ValidacaoException("Conta não encontrada"));
+
+        return new DadosContaG(conta);
     }
 }

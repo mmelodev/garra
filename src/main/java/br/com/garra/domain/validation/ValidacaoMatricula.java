@@ -12,11 +12,17 @@ import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+import java.time.temporal.TemporalAdjusters;
+
 @Component
 public class ValidacaoMatricula implements ValidarEntradaFinanceira{
 
     @Autowired
     private AlunoRepository alunoRepository;
+
+    @Autowired
+    private FinanceiroEntradaRepository entradaRepository;
 
     @Override
     public void validar(DadosFinanceiroEntrada dados) {
@@ -30,6 +36,14 @@ public class ValidacaoMatricula implements ValidarEntradaFinanceira{
             }
 
             Aluno aluno = alunoRepository.findById(dados.alunoId()).orElseThrow(() -> new ValidationException("Nenhum aluno encontrado."));
+
+            var data = dados.data();
+            LocalDateTime primeiroDia = data.with(TemporalAdjusters.firstDayOfMonth());
+            LocalDateTime ultimoDia = data.with(TemporalAdjusters.lastDayOfMonth());
+            var entrada = entradaRepository.existsByAlunoIdAndDataBetween(aluno.getId(), primeiroDia, ultimoDia);
+            if(entrada){
+                throw new ValidacaoException("Não pode lançar outra matrícula para esse aluno no mês atual.");
+            }
         }
     }
 }

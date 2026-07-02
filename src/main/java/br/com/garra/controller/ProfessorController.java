@@ -35,10 +35,9 @@ public class ProfessorController {
     @PostMapping
     @Transactional
     public ResponseEntity cadastroProfessor (@RequestBody @Valid DadosProfessor dados, UriComponentsBuilder uriBuilder){
-        var professor = new Professor(dados);
-        repository.save(professor);
-        var uri = uriBuilder.path("professor/{id}").buildAndExpand(professor.getId()).toUri();
-        return ResponseEntity.created(uri).body(new DadosProfessorG((professor)));
+        DadosProfessorG professor = professorService.cadastroProfessor(dados);
+        var uri = uriBuilder.path("professor/{id}").buildAndExpand(professor.id()).toUri();
+        return ResponseEntity.created(uri).body(professor);
     }
 
     @GetMapping
@@ -49,32 +48,27 @@ public class ProfessorController {
 
     @GetMapping("/{id}/infoG")
     public ResponseEntity listarProfessoresInfoGeral(@PathVariable Long id){
-        Professor professor = repository.getReferenceById(id);
-        return ResponseEntity.ok(new DadosProfessorG(professor));
+        DadosProfessorG professor = professorService.infoProfessor(id);
+        return ResponseEntity.ok(professor);
     }
 
     @PutMapping
     @Transactional
     public ResponseEntity atualizarCadastroProfesor(@RequestBody @Valid DadosAtualizarProfessor dados){
-        Professor professor = repository.findById(dados.id()).orElseThrow(RuntimeException::new);
-        professor.atualizarCadastroProfessor(dados);
-        return ResponseEntity.ok(new DadosProfessorG(professor));
+        DadosProfessorG professor = professorService.atualizarProfessor(dados);
+        return ResponseEntity.ok(professor);
     }
 
     @DeleteMapping("/{id}")
     @Transactional
-    public ResponseEntity inativarAluno(@PathVariable Long id){
-        Professor professor = repository.getReferenceById(id);
-        professor.inativarProfessor();
+    public ResponseEntity inativarProfessor(@PathVariable Long id){
+        professorService.inativarProfessor(id);
         return ResponseEntity.notFound().build();
-
     }
 
     @GetMapping("/area/{area}")
     public ResponseEntity<List<DadosProfessorG>> professorPorAreaConhecimento(@PathVariable String area){
         List<DadosProfessorG> professores = professorService.professorPorAreaConhecimento(area);
         return ResponseEntity.ok(professores);
-
-        //return (ResponseEntity<List<DadosProfessorG>>) professorService.professorPorAreaConhecimento(area);
     }
 }

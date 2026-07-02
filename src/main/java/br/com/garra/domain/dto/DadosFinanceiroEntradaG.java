@@ -9,8 +9,8 @@ import org.springframework.cglib.core.Local;
 
 import java.time.LocalDateTime;
 
-public record DadosFinanceiroEntradaG (Long id, double valor, LocalDateTime data, LocalDateTime dataVencimento, String descricao, FinanceiroEntradaCategoria categoria, StatusMensalidade statusMensalidade) {
+public record DadosFinanceiroEntradaG (Long id, double valor, LocalDateTime data, LocalDateTime dataVencimento, LocalDateTime dataEvento, LocalDateTime dataFimEvento, String descricao, FinanceiroEntradaCategoria categoria, StatusMensalidade statusMensalidade, Long alunoId, Long contaId) {
     public DadosFinanceiroEntradaG(FinanceiroEntrada entrada){
-        this(entrada.getId(), entrada.getValor(), entrada.getData(), entrada.getDataVencimento(), entrada.getDescricao(), entrada.getCategoria(), entrada.getStatusMensalidade());
+        this(entrada.getId(), entrada.getValor(), entrada.getData(), entrada.getDataEvento(), entrada.getDataFimEvento(), entrada.getDataVencimento(), entrada.getDescricao(), entrada.getCategoria(), entrada.getStatusMensalidade(), entrada.getAluno() != null? entrada.getAluno().getId() : null, entrada.getConta().getId());
     }
 }

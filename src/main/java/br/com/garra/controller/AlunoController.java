@@ -30,9 +30,6 @@ public class AlunoController {
     private AlunoRepository repository;
 
     @Autowired
-    private ProfessorRepository professorRepository;
-
-    @Autowired
     private AlunoService alunoService;
 
     @PostMapping
@@ -51,23 +48,21 @@ public class AlunoController {
 
     @GetMapping("/{id}/infoG")
     public ResponseEntity listaAlunoInfoCompleta(@PathVariable Long id){
-        Aluno aluno = repository.getReferenceById(id);
-        return ResponseEntity.ok(new DadosAlunoG(aluno));
+        DadosAlunoG aluno = alunoService.infoAluno(id);
+        return ResponseEntity.ok(aluno);
     }
 
     @PutMapping
     @Transactional
     public ResponseEntity atualizarCadastroAluno(@RequestBody @Valid DadosAtualizarAluno dados){
-        Aluno aluno = repository.findById(dados.id()).orElseThrow(() -> new RuntimeException());
-        aluno.atualizarCadastroAluno(dados);
-        return ResponseEntity.ok(new DadosAlunoG(aluno));
+        DadosAlunoG aluno = alunoService.atualizarAluno(dados);
+        return ResponseEntity.ok(aluno);
     }
 
     @DeleteMapping("/{id}")
     @Transactional
     public ResponseEntity inativarAluno (@PathVariable Long id){
-        Aluno aluno = repository.findById(id).orElseThrow(() -> new RuntimeException());
-        aluno.inativarAluno();
+        alunoService.inativarAluno(id);
         return ResponseEntity.notFound().build();
     }
 }

@@ -25,6 +25,8 @@ public class FinanceiroEntrada {
     private double valor;
     private LocalDateTime data;
     private LocalDateTime dataVencimento;
+    private LocalDateTime dataEvento;
+    private LocalDateTime dataFimEvento;
     private String descricao;
     @Enumerated(EnumType.STRING)
     private FinanceiroEntradaCategoria categoria;
@@ -116,6 +118,22 @@ public class FinanceiroEntrada {
 
     public void setDataVencimento(LocalDateTime dataVencimento) {
         this.dataVencimento = dataVencimento;
+    }
+
+    public LocalDateTime getDataEvento() {
+        return dataEvento;
+    }
+
+    public void setDataEvento(LocalDateTime dataEvento) {
+        this.dataEvento = dataEvento;
+    }
+
+    public LocalDateTime getDataFimEvento() {
+        return dataFimEvento;
+    }
+
+    public void setDataFimEvento(LocalDateTime dataFimEvento) {
+        this.dataFimEvento = dataFimEvento;
     }
 
     public FinanceiroEntrada() {}
