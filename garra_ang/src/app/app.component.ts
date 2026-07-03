@@ -1,14 +1,21 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterOutlet } from '@angular/router';
+import { Component, inject } from '@angular/core';
+import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+
+import { SessaoService } from './services';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
 export class AppComponent {
-  title = 'garra_ang';
+  protected readonly sessaoService = inject(SessaoService);
+  private readonly router = inject(Router);
+
+  sair(): void {
+    this.sessaoService.encerrarSessao();
+    this.router.navigateByUrl('/login');
+  }
 }

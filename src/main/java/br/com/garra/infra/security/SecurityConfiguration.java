@@ -26,6 +26,7 @@ public class SecurityConfiguration {
         return http.csrf(c -> c.disable())
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(req -> req
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/auth/login").permitAll()
                         .requestMatchers("/auth/register").permitAll() //temporario
                         .requestMatchers(HttpMethod.POST,"/professor").hasRole("ADMIN")

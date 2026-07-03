@@ -1,0 +1,76 @@
+<section class="mx-auto max-w-5xl p-6">
+  <div class="mb-4 flex items-center justify-between">
+    <h1 class="text-xl font-semibold text-gray-800">Professores</h1>
+    <div class="flex items-center gap-2">
+      @if (sessaoService.isAdmin()) {
+        <a
+          routerLink="/professores/novo"
+          class="rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-indigo-700"
+        >
+          Cadastrar Professor
+        </a>
+      }
+      <button
+        type="button"
+        class="rounded-md border border-gray-300 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50"
+        (click)="recarregar()"
+      >
+        Recarregar
+      </button>
+    </div>
+  </div>
+
+  @if (professores$ | async; as professores) {
+    @if (carregando()) {
+      <div class="animate-pulse space-y-2" role="status" aria-live="polite">
+        @for (linha of [1, 2, 3, 4, 5]; track linha) {
+          <div class="h-10 rounded bg-gray-200"></div>
+        }
+      </div>
+    } @else if (mensagemErro()) {
+      <div class="rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+        <p>{{ mensagemErro() }}</p>
+        <button
+          type="button"
+          class="mt-2 rounded-md border border-red-300 px-3 py-1 text-red-700 hover:bg-red-100"
+          (click)="recarregar()"
+        >
+          Tentar novamente
+        </button>
+      </div>
+    } @else if (professores.length === 0) {
+      <p class="rounded-md border border-dashed border-gray-300 p-6 text-center text-sm text-gray-500">
+        Nenhum professor cadastrado.
+      </p>
+    } @else {
+      <div class="overflow-x-auto rounded-md border border-gray-200">
+        <table class="min-w-full divide-y divide-gray-200 text-sm">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-4 py-2 text-left font-medium text-gray-600">Nome</th>
+              <th class="px-4 py-2 text-left font-medium text-gray-600">Área</th>
+              <th class="px-4 py-2 text-left font-medium text-gray-600">E-mail</th>
+              <th class="px-4 py-2 text-left font-medium text-gray-600">WhatsApp</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100">
+            @for (professor of professores; track professor.id) {
+              <tr class="hover:bg-gray-50">
+                <td class="px-4 py-2 text-gray-800">{{ professor.nome }}</td>
+                <td class="px-4 py-2 text-gray-600">{{ professor.areaConhecimento }}</td>
+                <td class="px-4 py-2 text-gray-600">{{ professor.email }}</td>
+                <td class="px-4 py-2 text-gray-600">{{ professor.whatsapp }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  } @else {
+    <div class="animate-pulse space-y-2" role="status" aria-live="polite">
+      @for (linha of [1, 2, 3, 4, 5]; track linha) {
+        <div class="h-10 rounded bg-gray-200"></div>
+      }
+    </div>
+  }
+</section>

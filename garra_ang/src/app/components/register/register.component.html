@@ -1,0 +1,93 @@
+<section
+  class="flex min-h-screen items-center justify-center bg-gradient-to-br from-indigo-50 via-white to-amber-50 px-4 py-12"
+>
+  <div class="w-full max-w-md rounded-2xl border border-indigo-100 bg-white p-8 shadow-xl shadow-indigo-100/50">
+    <div class="mb-8 text-center">
+      <span class="text-4xl">📚</span>
+      <h1 class="mt-2 text-2xl font-bold text-indigo-900">Crie sua conta</h1>
+      <p class="mt-1 text-sm text-gray-500">Junte-se ao cursinho Garra rumo ao ENEM</p>
+    </div>
+
+    @if (erro()) {
+      <div class="mb-6 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+        {{ erro() }}
+      </div>
+    }
+
+    <form [formGroup]="formulario" (ngSubmit)="cadastrar()" class="space-y-5" novalidate>
+      <div>
+        <label for="login" class="mb-1 block text-sm font-medium text-gray-700">Login</label>
+        <input
+          id="login"
+          type="text"
+          formControlName="login"
+          autocomplete="username"
+          class="w-full rounded-lg border px-3 py-2 text-sm text-gray-800 shadow-sm focus:outline-none focus:ring-2"
+          [class.border-gray-300]="!campoInvalido('login')"
+          [class.focus:ring-indigo-500]="!campoInvalido('login')"
+          [class.border-red-400]="campoInvalido('login')"
+          [class.focus:ring-red-400]="campoInvalido('login')"
+        />
+        @if (campoInvalido('login')) {
+          <p class="mt-1 text-xs text-red-600">Login deve ter ao menos 3 caracteres.</p>
+        }
+      </div>
+
+      <div>
+        <label for="senha" class="mb-1 block text-sm font-medium text-gray-700">Senha</label>
+        <input
+          id="senha"
+          type="password"
+          formControlName="senha"
+          autocomplete="new-password"
+          class="w-full rounded-lg border px-3 py-2 text-sm text-gray-800 shadow-sm focus:outline-none focus:ring-2"
+          [class.border-gray-300]="!campoInvalido('senha')"
+          [class.focus:ring-indigo-500]="!campoInvalido('senha')"
+          [class.border-red-400]="campoInvalido('senha')"
+          [class.focus:ring-red-400]="campoInvalido('senha')"
+        />
+        @if (campoInvalido('senha')) {
+          <p class="mt-1 text-xs text-red-600">Senha deve ter ao menos 6 caracteres.</p>
+        }
+      </div>
+
+      <div>
+        <label for="confirmarSenha" class="mb-1 block text-sm font-medium text-gray-700">Confirmar senha</label>
+        <input
+          id="confirmarSenha"
+          type="password"
+          formControlName="confirmarSenha"
+          autocomplete="new-password"
+          class="w-full rounded-lg border px-3 py-2 text-sm text-gray-800 shadow-sm focus:outline-none focus:ring-2"
+          [class.border-gray-300]="!campoInvalido('confirmarSenha') && !senhasDivergem()"
+          [class.focus:ring-indigo-500]="!campoInvalido('confirmarSenha') && !senhasDivergem()"
+          [class.border-red-400]="campoInvalido('confirmarSenha') || senhasDivergem()"
+          [class.focus:ring-red-400]="campoInvalido('confirmarSenha') || senhasDivergem()"
+        />
+        @if (campoInvalido('confirmarSenha')) {
+          <p class="mt-1 text-xs text-red-600">Confirme sua senha.</p>
+        } @else if (senhasDivergem()) {
+          <p class="mt-1 text-xs text-red-600">As senhas não coincidem.</p>
+        }
+      </div>
+
+      <button
+        type="submit"
+        [disabled]="carregando()"
+        class="flex w-full items-center justify-center gap-2 rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-60"
+      >
+        @if (carregando()) {
+          <span class="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></span>
+          Cadastrando...
+        } @else {
+          Cadastrar
+        }
+      </button>
+    </form>
+
+    <p class="mt-6 text-center text-sm text-gray-500">
+      Já tem conta?
+      <a routerLink="/login" class="font-medium text-indigo-600 hover:text-indigo-800">Entrar</a>
+    </p>
+  </div>
+</section>
