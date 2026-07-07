@@ -1,0 +1,140 @@
+<section class="mx-auto max-w-2xl p-6">
+  <div class="mb-6 flex items-center justify-between">
+    <h1 class="text-xl font-semibold text-gray-800">Cadastrar Saída Financeira</h1>
+    <a routerLink="/financeiro/saidas" class="text-sm text-indigo-600 hover:text-indigo-800">Voltar</a>
+  </div>
+
+  @if (erro()) {
+    <div class="mb-6 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+      {{ erro() }}
+    </div>
+  }
+
+  <form [formGroup]="formulario" (ngSubmit)="salvar()" class="space-y-5" novalidate>
+    <div>
+      <label for="categoria" class="mb-1 block text-sm font-medium text-gray-700">Categoria</label>
+      <select
+        id="categoria"
+        formControlName="categoria"
+        class="w-full rounded-lg border px-3 py-2 text-sm text-gray-800 shadow-sm focus:outline-none focus:ring-2"
+        [class.border-gray-300]="!campoInvalido('categoria')"
+        [class.focus:ring-indigo-500]="!campoInvalido('categoria')"
+        [class.border-red-400]="campoInvalido('categoria')"
+        [class.focus:ring-red-400]="campoInvalido('categoria')"
+      >
+        <option [ngValue]="null" disabled>Selecione uma categoria</option>
+        @for (categoria of categorias; track categoria[0]) {
+          <option [ngValue]="categoria[0]">{{ categoria[1] }}</option>
+        }
+      </select>
+      @if (campoInvalido('categoria')) {
+        <p class="mt-1 text-xs text-red-600">Selecione uma categoria.</p>
+      }
+    </div>
+
+    <div>
+      <label for="tipoFinanceiroSaida" class="mb-1 block text-sm font-medium text-gray-700">Tipo</label>
+      <select
+        id="tipoFinanceiroSaida"
+        formControlName="tipoFinanceiroSaida"
+        class="w-full rounded-lg border px-3 py-2 text-sm text-gray-800 shadow-sm focus:outline-none focus:ring-2"
+        [class.border-gray-300]="!campoInvalido('tipoFinanceiroSaida')"
+        [class.focus:ring-indigo-500]="!campoInvalido('tipoFinanceiroSaida')"
+        [class.border-red-400]="campoInvalido('tipoFinanceiroSaida')"
+        [class.focus:ring-red-400]="campoInvalido('tipoFinanceiroSaida')"
+      >
+        <option [ngValue]="null" disabled>Selecione um tipo</option>
+        @for (tipo of tipos; track tipo[0]) {
+          <option [ngValue]="tipo[0]">{{ tipo[1] }}</option>
+        }
+      </select>
+      @if (campoInvalido('tipoFinanceiroSaida')) {
+        <p class="mt-1 text-xs text-red-600">Selecione um tipo.</p>
+      }
+    </div>
+
+    <div>
+      <label for="valor" class="mb-1 block text-sm font-medium text-gray-700">Valor (R$)</label>
+      <input
+        id="valor"
+        type="text"
+        inputmode="decimal"
+        placeholder="0,00"
+        maxlength="12"
+        formControlName="valor"
+        (input)="formatarValorDigitado($event)"
+        class="w-full rounded-lg border px-3 py-2 text-sm text-gray-800 shadow-sm focus:outline-none focus:ring-2"
+        [class.border-gray-300]="!campoInvalido('valor')"
+        [class.focus:ring-indigo-500]="!campoInvalido('valor')"
+        [class.border-red-400]="campoInvalido('valor')"
+        [class.focus:ring-red-400]="campoInvalido('valor')"
+      />
+      @if (campoInvalido('valor')) {
+        <p class="mt-1 text-xs text-red-600">Informe um valor entre R$ 0,01 e R$ 9.999.999,99.</p>
+      }
+    </div>
+
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <label for="data" class="mb-1 block text-sm font-medium text-gray-700">Data</label>
+        <input
+          id="data"
+          type="text"
+          inputmode="numeric"
+          placeholder="dd/mm/aaaa"
+          maxlength="10"
+          formControlName="data"
+          (input)="formatarDigitacaoData($event)"
+          class="w-full rounded-lg border px-3 py-2 text-sm text-gray-800 shadow-sm focus:outline-none focus:ring-2"
+          [class.border-gray-300]="!campoInvalido('data')"
+          [class.focus:ring-indigo-500]="!campoInvalido('data')"
+          [class.border-red-400]="campoInvalido('data')"
+          [class.focus:ring-red-400]="campoInvalido('data')"
+        />
+        @if (campoInvalido('data')) {
+          <p class="mt-1 text-xs text-red-600">Informe a data no formato dd/mm/aaaa.</p>
+        }
+      </div>
+
+      <div>
+        <label for="hora" class="mb-1 block text-sm font-medium text-gray-700">Hora</label>
+        <input
+          id="hora"
+          type="time"
+          formControlName="hora"
+          class="w-full rounded-lg border px-3 py-2 text-sm text-gray-800 shadow-sm focus:outline-none focus:ring-2"
+          [class.border-gray-300]="!campoInvalido('hora')"
+          [class.focus:ring-indigo-500]="!campoInvalido('hora')"
+          [class.border-red-400]="campoInvalido('hora')"
+          [class.focus:ring-red-400]="campoInvalido('hora')"
+        />
+        @if (campoInvalido('hora')) {
+          <p class="mt-1 text-xs text-red-600">Informe a hora.</p>
+        }
+      </div>
+    </div>
+
+    <div>
+      <label for="descricao" class="mb-1 block text-sm font-medium text-gray-700">Descrição</label>
+      <textarea
+        id="descricao"
+        formControlName="descricao"
+        rows="3"
+        class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-800 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+      ></textarea>
+    </div>
+
+    <button
+      type="submit"
+      [disabled]="salvando()"
+      class="flex w-full items-center justify-center gap-2 rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-60"
+    >
+      @if (salvando()) {
+        <span class="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></span>
+        Salvando...
+      } @else {
+        Cadastrar Saída
+      }
+    </button>
+  </form>
+</section>

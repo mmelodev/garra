@@ -1,0 +1,89 @@
+<aside class="relative h-full w-16 shrink-0">
+  <div
+    class="group absolute inset-y-0 left-0 z-20 flex w-16 flex-col overflow-hidden border-r border-indigo-100 bg-white/95 py-6 backdrop-blur transition-[width] duration-200 ease-out hover:w-60 hover:shadow-card"
+  >
+    <a
+      routerLink="/dashboard"
+      class="mb-8 flex h-9 shrink-0 items-center gap-3 px-[1.125rem] text-lg font-bold text-indigo-900"
+    >
+      <span
+        class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gray-900 text-base text-white"
+        >🎓</span
+      >
+      <span
+        class="whitespace-nowrap opacity-0 transition-opacity duration-150 group-hover:opacity-100"
+        >Garra</span
+      >
+    </a>
+
+    <nav class="flex flex-1 flex-col gap-1 px-3.5 text-sm">
+      <a
+        routerLink="/dashboard"
+        routerLinkActive="bg-indigo-50 text-indigo-700"
+        class="flex items-center gap-3 rounded-lg px-1.5 py-2.5 text-gray-500 transition-colors hover:bg-indigo-50 hover:text-indigo-700"
+      >
+        <ui-icon name="dashboard" class="shrink-0" />
+        <span
+          class="whitespace-nowrap opacity-0 transition-opacity duration-150 group-hover:opacity-100"
+          >Dashboard</span
+        >
+      </a>
+      <a
+        routerLink="/financeiro/transacoes"
+        routerLinkActive="bg-indigo-50 text-indigo-700"
+        class="flex items-center gap-3 rounded-lg px-1.5 py-2.5 text-gray-500 transition-colors hover:bg-indigo-50 hover:text-indigo-700"
+      >
+        <ui-icon name="transactions" class="shrink-0" />
+        <span
+          class="whitespace-nowrap opacity-0 transition-opacity duration-150 group-hover:opacity-100"
+          >Transações</span
+        >
+      </a>
+      <a
+        routerLink="/financeiro/saidas"
+        routerLinkActive="bg-indigo-50 text-indigo-700"
+        class="flex items-center gap-3 rounded-lg px-1.5 py-2.5 text-gray-500 transition-colors hover:bg-indigo-50 hover:text-indigo-700"
+      >
+        <ui-icon name="payments" class="shrink-0" />
+        <span
+          class="whitespace-nowrap opacity-0 transition-opacity duration-150 group-hover:opacity-100"
+          >Pagamentos</span
+        >
+      </a>
+      <a
+        routerLink="/alunos"
+        routerLinkActive="bg-indigo-50 text-indigo-700"
+        class="flex items-center gap-3 rounded-lg px-1.5 py-2.5 text-gray-500 transition-colors hover:bg-indigo-50 hover:text-indigo-700"
+      >
+        <ui-icon name="students" class="shrink-0" />
+        <span
+          class="whitespace-nowrap opacity-0 transition-opacity duration-150 group-hover:opacity-100"
+          >Alunos</span
+        >
+      </a>
+      <a
+        routerLink="/professores"
+        routerLinkActive="bg-indigo-50 text-indigo-700"
+        class="flex items-center gap-3 rounded-lg px-1.5 py-2.5 text-gray-500 transition-colors hover:bg-indigo-50 hover:text-indigo-700"
+      >
+        <ui-icon name="teachers" class="shrink-0" />
+        <span
+          class="whitespace-nowrap opacity-0 transition-opacity duration-150 group-hover:opacity-100"
+          >Professores</span
+        >
+      </a>
+    </nav>
+
+    <button
+      type="button"
+      (click)="sair()"
+      class="mx-3.5 mt-4 flex items-center gap-3 rounded-lg border border-gray-300 px-1.5 py-2.5 text-left text-gray-500 hover:bg-gray-50"
+    >
+      <ui-icon name="logout" class="shrink-0" />
+      <span
+        class="whitespace-nowrap opacity-0 transition-opacity duration-150 group-hover:opacity-100"
+        >Sair</span
+      >
+    </button>
+  </div>
+</aside>

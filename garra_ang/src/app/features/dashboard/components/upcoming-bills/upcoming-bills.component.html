@@ -1,0 +1,16 @@
+@if (contas$ | async; as contas) {
+  <ui-card>
+    <h3 class="mb-2 text-sm font-semibold text-gray-900">Próximas Contas</h3>
+    @for (conta of contas; track conta.id) {
+      <ui-bill-item
+        [title]="conta.titulo"
+        [subtitle]="'Vence em ' + (conta.vencimento | date: 'dd/MM/yyyy')"
+        [value]="conta.valor"
+        [badgeLabel]="rotuloPorStatus[conta.status]"
+        [badgeVariant]="variantePorStatus[conta.status]"
+      ></ui-bill-item>
+    } @empty {
+      <p class="py-4 text-center text-caption text-gray-500">Nenhuma conta próxima.</p>
+    }
+  </ui-card>
+}

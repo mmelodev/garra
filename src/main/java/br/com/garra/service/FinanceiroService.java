@@ -66,10 +66,6 @@ public class FinanceiroService {
 
         validadores.forEach(v -> v.validar(dados));
 
-        if(dados.data() != null){
-            throw new ValidacaoException("Operação inválida, não é possível alterar data atual.");
-        }
-
         if(dados.categoria() == FinanceiroEntradaCategoria.OUTROS){
             if(dados.descricao() == null){
                 throw new ValidacaoException("Descrição é obrigatória nesse caso.");

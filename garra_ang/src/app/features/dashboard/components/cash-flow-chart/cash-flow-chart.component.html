@@ -1,0 +1,28 @@
+@if (fluxoBruto$ | async; as bruto) {
+  <ui-card>
+    <div class="mb-3 flex items-center justify-between">
+      <h3 class="text-sm font-semibold text-gray-900">Fluxo de Caixa</h3>
+      <div class="flex gap-1 text-caption">
+        @for (opcao of opcoesGranularidade; track opcao.valor) {
+          <button
+            type="button"
+            (click)="definirGranularidade(opcao.valor)"
+            [class.text-indigo-700]="granularidade() === opcao.valor"
+            [class.font-semibold]="granularidade() === opcao.valor"
+            class="rounded-control px-2 py-1 text-gray-500 transition-colors hover:bg-gray-50"
+          >
+            {{ opcao.label }}
+          </button>
+        }
+      </div>
+    </div>
+    <div class="h-64">
+      <canvas
+        baseChart
+        type="line"
+        [data]="construirChartData(construirFluxo(bruto))"
+        [options]="chartOptions"
+      ></canvas>
+    </div>
+  </ui-card>
+}

@@ -1,0 +1,20 @@
+<div
+  class="-mx-2 flex items-center justify-between gap-3 rounded-control px-2 py-3 transition-colors hover:bg-gray-50"
+>
+  <div class="flex min-w-0 items-center gap-3">
+    <ng-content select="[icon]"></ng-content>
+    <div class="min-w-0">
+      <p class="truncate text-sm font-medium text-gray-900">{{ title() }}</p>
+      @if (subtitle()) {
+        <p class="truncate text-caption text-gray-500">{{ subtitle() }}</p>
+      }
+    </div>
+  </div>
+
+  <div class="flex shrink-0 items-center gap-2">
+    @if (badgeLabel()) {
+      <ui-badge [variant]="badgeVariant()">{{ badgeLabel() }}</ui-badge>
+    }
+    <span class="text-sm font-semibold text-gray-900">{{ value() | currency: 'BRL' }}</span>
+  </div>
+</div>

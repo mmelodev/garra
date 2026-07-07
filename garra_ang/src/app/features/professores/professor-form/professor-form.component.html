@@ -1,0 +1,226 @@
+<section class="mx-auto max-w-2xl p-6">
+  <div class="mb-6 flex items-center justify-between">
+    <h1 class="text-xl font-semibold text-gray-800">
+      {{ modoEdicao ? 'Editar Professor' : 'Cadastrar Professor' }}
+    </h1>
+    <a routerLink="/professores" class="text-sm text-indigo-600 hover:text-indigo-800">Voltar</a>
+  </div>
+
+  @if (carregandoDados()) {
+    <div class="animate-pulse space-y-3" role="status" aria-live="polite">
+      @for (linha of [1, 2, 3, 4]; track linha) {
+        <div class="h-10 rounded bg-gray-200"></div>
+      }
+    </div>
+  } @else {
+    @if (erro()) {
+      <div class="mb-6 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+        {{ erro() }}
+      </div>
+    }
+
+    <form [formGroup]="formulario" (ngSubmit)="salvar()" class="space-y-5" novalidate>
+      <div>
+        <label for="nome" class="mb-1 block text-sm font-medium text-gray-700">Nome</label>
+        <input
+          id="nome"
+          type="text"
+          formControlName="nome"
+          class="w-full rounded-lg border px-3 py-2 text-sm text-gray-800 shadow-sm focus:outline-none focus:ring-2"
+          [class.border-gray-300]="!campoInvalido('nome')"
+          [class.focus:ring-indigo-500]="!campoInvalido('nome')"
+          [class.border-red-400]="campoInvalido('nome')"
+          [class.focus:ring-red-400]="campoInvalido('nome')"
+        />
+        @if (campoInvalido('nome')) {
+          <p class="mt-1 text-xs text-red-600">Informe o nome.</p>
+        }
+      </div>
+
+      <div>
+        <label for="areaConhecimento" class="mb-1 block text-sm font-medium text-gray-700">Área de Conhecimento</label>
+        <select
+          id="areaConhecimento"
+          formControlName="areaConhecimento"
+          class="w-full rounded-lg border px-3 py-2 text-sm text-gray-800 shadow-sm focus:outline-none focus:ring-2"
+          [class.border-gray-300]="!campoInvalido('areaConhecimento')"
+          [class.focus:ring-indigo-500]="!campoInvalido('areaConhecimento')"
+          [class.border-red-400]="campoInvalido('areaConhecimento')"
+          [class.focus:ring-red-400]="campoInvalido('areaConhecimento')"
+        >
+          <option [ngValue]="null" disabled>Selecione uma área</option>
+          @for (area of areas; track area[0]) {
+            <option [ngValue]="area[0]">{{ area[1] }}</option>
+          }
+        </select>
+        @if (campoInvalido('areaConhecimento')) {
+          <p class="mt-1 text-xs text-red-600">Selecione uma área de conhecimento.</p>
+        }
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label for="rg" class="mb-1 block text-sm font-medium text-gray-700">RG</label>
+          <input
+            id="rg"
+            type="text"
+            formControlName="rg"
+            class="w-full rounded-lg border px-3 py-2 text-sm text-gray-800 shadow-sm focus:outline-none focus:ring-2 disabled:bg-gray-100 disabled:text-gray-500"
+            [class.border-gray-300]="!campoInvalido('rg')"
+            [class.focus:ring-indigo-500]="!campoInvalido('rg')"
+            [class.border-red-400]="campoInvalido('rg')"
+            [class.focus:ring-red-400]="campoInvalido('rg')"
+          />
+          @if (campoInvalido('rg')) {
+            <p class="mt-1 text-xs text-red-600">Informe o RG.</p>
+          }
+        </div>
+
+        <div>
+          <label for="cpf" class="mb-1 block text-sm font-medium text-gray-700">CPF</label>
+          <input
+            id="cpf"
+            type="text"
+            formControlName="cpf"
+            class="w-full rounded-lg border px-3 py-2 text-sm text-gray-800 shadow-sm focus:outline-none focus:ring-2 disabled:bg-gray-100 disabled:text-gray-500"
+            [class.border-gray-300]="!campoInvalido('cpf')"
+            [class.focus:ring-indigo-500]="!campoInvalido('cpf')"
+            [class.border-red-400]="campoInvalido('cpf')"
+            [class.focus:ring-red-400]="campoInvalido('cpf')"
+          />
+          @if (campoInvalido('cpf')) {
+            <p class="mt-1 text-xs text-red-600">Informe o CPF.</p>
+          }
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label for="email" class="mb-1 block text-sm font-medium text-gray-700">E-mail</label>
+          <input
+            id="email"
+            type="email"
+            formControlName="email"
+            class="w-full rounded-lg border px-3 py-2 text-sm text-gray-800 shadow-sm focus:outline-none focus:ring-2"
+            [class.border-gray-300]="!campoInvalido('email')"
+            [class.focus:ring-indigo-500]="!campoInvalido('email')"
+            [class.border-red-400]="campoInvalido('email')"
+            [class.focus:ring-red-400]="campoInvalido('email')"
+          />
+          @if (campoInvalido('email')) {
+            <p class="mt-1 text-xs text-red-600">Informe um e-mail válido.</p>
+          }
+        </div>
+
+        <div>
+          <label for="whatsapp" class="mb-1 block text-sm font-medium text-gray-700">WhatsApp</label>
+          <input
+            id="whatsapp"
+            type="text"
+            formControlName="whatsapp"
+            class="w-full rounded-lg border px-3 py-2 text-sm text-gray-800 shadow-sm focus:outline-none focus:ring-2"
+            [class.border-gray-300]="!campoInvalido('whatsapp')"
+            [class.focus:ring-indigo-500]="!campoInvalido('whatsapp')"
+            [class.border-red-400]="campoInvalido('whatsapp')"
+            [class.focus:ring-red-400]="campoInvalido('whatsapp')"
+          />
+          @if (campoInvalido('whatsapp')) {
+            <p class="mt-1 text-xs text-red-600">Informe o WhatsApp.</p>
+          }
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label for="genero" class="mb-1 block text-sm font-medium text-gray-700">Gênero</label>
+          <input
+            id="genero"
+            type="text"
+            formControlName="genero"
+            class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-800 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:bg-gray-100 disabled:text-gray-500"
+          />
+        </div>
+
+        <div>
+          <label for="dataNascimento" class="mb-1 block text-sm font-medium text-gray-700">Data de Nascimento</label>
+          <input
+            id="dataNascimento"
+            type="date"
+            formControlName="dataNascimento"
+            class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-800 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:bg-gray-100 disabled:text-gray-500"
+          />
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label for="dataDeEntrada" class="mb-1 block text-sm font-medium text-gray-700">Data de Entrada</label>
+          <input
+            id="dataDeEntrada"
+            type="date"
+            formControlName="dataDeEntrada"
+            class="w-full rounded-lg border px-3 py-2 text-sm text-gray-800 shadow-sm focus:outline-none focus:ring-2 disabled:bg-gray-100 disabled:text-gray-500"
+            [class.border-gray-300]="!campoInvalido('dataDeEntrada')"
+            [class.focus:ring-indigo-500]="!campoInvalido('dataDeEntrada')"
+            [class.border-red-400]="campoInvalido('dataDeEntrada')"
+            [class.focus:ring-red-400]="campoInvalido('dataDeEntrada')"
+          />
+          @if (campoInvalido('dataDeEntrada')) {
+            <p class="mt-1 text-xs text-red-600">Informe a data de entrada.</p>
+          }
+        </div>
+
+        <div>
+          <label for="dataDeSaida" class="mb-1 block text-sm font-medium text-gray-700">Data de Saída</label>
+          <input
+            id="dataDeSaida"
+            type="date"
+            formControlName="dataDeSaida"
+            class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-800 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          />
+        </div>
+      </div>
+
+      <div>
+        <label for="descricao" class="mb-1 block text-sm font-medium text-gray-700">Descrição</label>
+        <textarea
+          id="descricao"
+          formControlName="descricao"
+          rows="3"
+          class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-800 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        ></textarea>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <button
+          type="submit"
+          [disabled]="salvando() || excluindo()"
+          class="flex flex-1 items-center justify-center gap-2 rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          @if (salvando()) {
+            <span class="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></span>
+            Salvando...
+          } @else {
+            {{ modoEdicao ? 'Salvar Alterações' : 'Cadastrar Professor' }}
+          }
+        </button>
+
+        @if (modoEdicao) {
+          <button
+            type="button"
+            [disabled]="salvando() || excluindo()"
+            (click)="excluir()"
+            class="flex items-center justify-center gap-2 rounded-lg border border-red-300 px-4 py-2.5 text-sm font-semibold text-red-700 transition hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            @if (excluindo()) {
+              <span class="h-4 w-4 animate-spin rounded-full border-2 border-red-700 border-t-transparent"></span>
+              Excluindo...
+            } @else {
+              Excluir
+            }
+          </button>
+        }
+      </div>
+    </form>
+  }
+</section>

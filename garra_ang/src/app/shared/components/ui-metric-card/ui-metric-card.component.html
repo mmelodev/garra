@@ -1,0 +1,24 @@
+<ui-card [hoverable]="true">
+  <div class="flex items-start justify-between gap-3">
+    <div class="min-w-0">
+      <p class="truncate text-caption font-medium text-gray-500">{{ label() }}</p>
+      <p class="mt-1 truncate text-heading font-bold text-gray-900">
+        @if (currency()) {
+          {{ value() | currency: 'BRL' }}
+        } @else {
+          {{ value() }}
+        }
+      </p>
+    </div>
+    <ng-content select="[icon]"></ng-content>
+  </div>
+
+  @if (variation(); as variacao) {
+    <div class="mt-3 flex items-center gap-2">
+      <ui-badge [variant]="variacaoVariant()">{{ formatarVariacao(variacao) }}</ui-badge>
+      @if (variacao.label) {
+        <span class="text-caption text-gray-500">{{ variacao.label }}</span>
+      }
+    </div>
+  }
+</ui-card>

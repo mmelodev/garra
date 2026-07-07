@@ -1,0 +1,15 @@
+@use 'app/design-system/colors';
+@use 'app/design-system/typography';
+@use 'app/design-system/spacing';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* You can add global styles to this file, and also import other style files */
+
+body {
+  @apply min-h-screen text-gray-900;
+  background: var(--color-surface-gradient);
+  font-family: var(--font-family-base);
+}

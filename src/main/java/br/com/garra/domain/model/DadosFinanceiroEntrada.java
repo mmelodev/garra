@@ -13,6 +13,10 @@ import java.time.LocalDateTime;
 
 public record DadosFinanceiroEntrada (@NotNull @DecimalMin(value = "0.01", message = "Valor deve ser maior que zero") @DecimalMax(value = "9999999.99", message = "Valor máximo permitido") @Digits(integer = 10, fraction = 2, message = "Valor deve ter no máximo 2 casas decimais") double valor, Long alunoId, FinanceiroConta conta, LocalDateTime data, LocalDateTime dataEvento, LocalDateTime dataFimEvento, LocalDateTime dataVencimento, String descricao, @NotNull FinanceiroEntradaCategoria categoria, StatusMensalidade statusMensalidade){
     public DadosFinanceiroEntrada {
+        if(data == null){
+            data = LocalDateTime.now();
+        }
+
         if(categoria == FinanceiroEntradaCategoria.MENSALIDADE && statusMensalidade == null){
             statusMensalidade = StatusMensalidade.PENDENTE;
         }

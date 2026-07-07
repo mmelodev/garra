@@ -1,0 +1,59 @@
+<section class="mx-auto max-w-6xl space-y-6 p-6">
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-display font-bold text-gray-900">Dashboard Financeiro</h1>
+      <p class="text-caption text-gray-500">Visão geral do cursinho Garra</p>
+    </div>
+    <!-- Toggle de período (Mensal/Trimestral/Anual) removido temporariamente:
+         ainda não existe esse filtro na API. Reativar quando o back-end suportar. -->
+    <!--
+    <ui-dropdown
+      [options]="periodos"
+      [value]="periodoSelecionado()"
+      (valueChange)="periodoSelecionado.set($event)"
+    ></ui-dropdown>
+    -->
+  </div>
+
+  @if (resumo$ | async; as resumo) {
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+      <ui-metric-card
+        label="Saldo"
+        [value]="resumo.saldoAtual"
+        [variation]="{ value: resumo.variacaoSaldoAtual.valor }"
+      ></ui-metric-card>
+      <!-- Card "Economias" removido temporariamente: ainda não vai ser usado. -->
+      <!--
+      <ui-metric-card
+        label="Economias"
+        [value]="resumo.economias"
+        [variation]="{ value: resumo.variacaoEconomias.valor }"
+      ></ui-metric-card>
+      -->
+      <ui-metric-card
+        label="Receitas"
+        [value]="resumo.receitas"
+        [variation]="{ value: resumo.variacaoReceitas.valor }"
+      ></ui-metric-card>
+      <ui-metric-card
+        label="Despesas"
+        [value]="resumo.despesas"
+        [variation]="{
+          value: resumo.variacaoDespesas.valor,
+          invertido: resumo.variacaoDespesas.invertido
+        }"
+      ></ui-metric-card>
+    </div>
+  }
+
+  <app-card-panel class="m-10"></app-card-panel>
+
+  <div class="grid grid-cols-1 gap-4 lg:grid-cols-3">
+    <div class="lg:col-span-2">
+      <app-cash-flow-chart></app-cash-flow-chart>
+    </div>
+    <app-expenses-donut></app-expenses-donut>
+  </div>
+
+  <app-last-transaction class="m-10"></app-last-transaction>
+</section>

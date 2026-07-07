@@ -1,0 +1,24 @@
+@if (categorias$ | async; as categorias) {
+  <ui-card>
+    <h3 class="mb-3 text-sm font-semibold text-gray-900">Despesas por Categoria</h3>
+    <div class="h-48">
+      <canvas
+        baseChart
+        type="doughnut"
+        [data]="construirChartData(categorias)"
+        [options]="chartOptions"
+      ></canvas>
+    </div>
+    <ul class="mt-4 space-y-1.5">
+      @for (item of categorias; track item.categoria; let indice = $index) {
+        <li class="flex items-center justify-between text-caption">
+          <span class="flex items-center gap-2 text-gray-600">
+            <span class="h-2.5 w-2.5 rounded-pill" [style.background-color]="corLegenda(indice)"></span>
+            {{ rotulos[item.categoria] }}
+          </span>
+          <span class="font-medium text-gray-900">{{ item.valor | currency: 'BRL' }}</span>
+        </li>
+      }
+    </ul>
+  </ui-card>
+}

@@ -9,6 +9,18 @@ export type AreaConhecimento =
   | 'GEOGRAFIA'
   | 'BIOLOGIA';
 
+export const ROTULOS_AREA_CONHECIMENTO: Record<AreaConhecimento, string> = {
+  MATEMATICA: 'Matemática',
+  REDACAO: 'Redação',
+  FISICA: 'Física',
+  QUIMICA: 'Química',
+  PORTUGUES: 'Português',
+  LITERATURA: 'Literatura',
+  HISTORIA: 'História',
+  GEOGRAFIA: 'Geografia',
+  BIOLOGIA: 'Biologia',
+};
+
 export type FinanceiroEntradaCategoria =
   | 'MENSALIDADE'
   | 'MATRICULA'

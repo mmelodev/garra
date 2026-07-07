@@ -1,0 +1,9 @@
+<div class="flex min-h-screen">
+  @if (sessaoService.estaAutenticado()) {
+    <app-sidebar />
+  }
+
+  <main class="min-w-0 flex-1">
+    <router-outlet></router-outlet>
+  </main>
+</div>

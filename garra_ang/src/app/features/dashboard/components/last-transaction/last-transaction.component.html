@@ -1,0 +1,48 @@
+@if (transacoes$ | async; as transacoes) {
+  <ui-card>
+    <div class="mb-2 flex items-center justify-between">
+      <h3 class="text-sm font-semibold text-gray-900">Últimas Transações</h3>
+      <div class="flex gap-1 text-caption">
+        <button
+          type="button"
+          (click)="definirFiltro('todas')"
+          [class.text-indigo-700]="filtro() === 'todas'"
+          [class.font-semibold]="filtro() === 'todas'"
+          class="rounded-control px-2 py-1 text-gray-500 transition-colors hover:bg-gray-50"
+        >
+          Todas
+        </button>
+        <button
+          type="button"
+          (click)="definirFiltro('entrada')"
+          [class.text-indigo-700]="filtro() === 'entrada'"
+          [class.font-semibold]="filtro() === 'entrada'"
+          class="rounded-control px-2 py-1 text-gray-500 transition-colors hover:bg-gray-50"
+        >
+          Entradas
+        </button>
+        <button
+          type="button"
+          (click)="definirFiltro('saida')"
+          [class.text-indigo-700]="filtro() === 'saida'"
+          [class.font-semibold]="filtro() === 'saida'"
+          class="rounded-control px-2 py-1 text-gray-500 transition-colors hover:bg-gray-50"
+        >
+          Saídas
+        </button>
+      </div>
+    </div>
+
+    @for (transacao of filtrar(transacoes); track transacao.id) {
+      <ui-bill-item
+        [title]="transacao.descricao"
+        [subtitle]="transacao.data | date: 'dd/MM/yyyy'"
+        [value]="transacao.valor"
+        [badgeLabel]="transacao.tipo === 'entrada' ? 'Entrada' : 'Saída'"
+        [badgeVariant]="transacao.tipo === 'entrada' ? 'positive' : 'negative'"
+      ></ui-bill-item>
+    } @empty {
+      <p class="py-4 text-center text-caption text-gray-500">Nenhuma transação neste filtro.</p>
+    }
+  </ui-card>
+}
